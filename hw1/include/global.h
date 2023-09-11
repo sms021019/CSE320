@@ -46,11 +46,6 @@ exit(retcode); \
 long global_options;
 
 /*
- * Name of the file containing the diff to be used.
- */
-char *diff_filename;
-
-/*
  * Bits that are OR-ed in to global_options to specify various modes of
  * operation.
  */
