@@ -20,6 +20,46 @@
  */
 int validargs(int argc, char **argv)
 {
+    //[["aa"], ["-f"]...]
+
     // TO BE IMPLEMENTED.
-    abort();
+    if(argc == 1){
+        global_options |= 0;
+        return 0;
+    }
+
+    if (argc > 0)
+    {
+        if(argc < 5){
+                char *tempSecondArgument = *(argv + 1);
+                if(*(tempSecondArgument) == '-' && *(tempSecondArgument+1) == 'h' && *(tempSecondArgument+2) == '\0'){
+                    global_options |= HELP_OPTION;
+                    return 0;
+                }
+                else if(*(tempSecondArgument) == '-' && *(tempSecondArgument+1) == 'm' && *(tempSecondArgument+2) == '\0'){
+                    if(argc == 2){
+                        global_options |= MATRIX_OPTION;
+                        return 0;
+                    }
+                }
+                else if(*(tempSecondArgument) == '-' && *(tempSecondArgument+1) == 'n' && *(tempSecondArgument+2) == '\0'){
+                    if(argc == 2){
+                        global_options |= NEWICK_OPTION;
+                        return 0;
+                    }
+                    char *tempThirdArgument = *(argv + 2);
+                    if(*(tempThirdArgument) == '-' && *(tempThirdArgument+1) == 'o' && *(tempThirdArgument+2) == '\0'){
+                        if(argc == 4){
+                            global_options |= NEWICK_OPTION;
+                            outlier_name = *(argv + 3);
+                            return 0;
+                        }
+                    }
+                }
+
+        }
+
+    }
+    return -1;
+
 }

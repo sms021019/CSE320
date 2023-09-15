@@ -3,6 +3,28 @@
 #include "global.h"
 #include "debug.h"
 
+
+double stringToDouble(const char* str){
+    double result = 0.0;
+    double fraction = 0.1;
+
+    while(*str >= '0' && *str <= '9') {
+        result = result * 10.0 + (*str - '0');
+        str++;
+    }
+
+    if(*str == '.'){
+        str++;
+        while(*str >= '0' && *str <= '9'){
+            result += (*str - '0') * fraction;
+            fraction /= 10.0;
+            str++;
+        }
+    }
+
+    return result;
+}
+
 /**
  * @brief  Read genetic distance data and initialize data structures.
  * @details  This function reads genetic distance data from a specified
@@ -54,8 +76,85 @@
 
 int read_distance_data(FILE *in) {
     // TO BE IMPLEMENTED
-    abort();
+
+    int ch;
+    int rowCounter = 0;
+    int columnCounter = 0;
+    int bufferCounter = 0;
+
+    while((ch = fgetc(in)) != '\0'){                            // Reading a file by single character
+        if(ch == '#'){                                              // Checks if the line starts with #
+            while(ch != '#'){                                       // Skip the line
+                while(ch != '\n'){
+                    ch = fgetc(in);
+                }
+                ch = fgetc(in);
+            }
+        }
+
+        while(ch != '\n' && rowCounter == 0){                      // While loop only for the first line
+            while(ch != ','){                                           // While loop for each columns
+                *(input_buffer + bufferCounter) = ch;
+
+                if(bufferCounter == INPUT_MAX){                    // If the length of field is longer than maximum input length then return error
+                    return -1;
+                }
+                bufferCounter++;
+                ch = fgetc(in);
+            }
+
+            if(bufferCounter != 0){                                 // Skip if the field(buffer) is empty
+                *(input_buffer + bufferCounter) = '\0';             // Set null character at the end of buffer
+                for(int i = 0; i <= bufferCounter; i++){            // Assigning each characters in a buffer to node_names[column]
+                    *(*(node_names + columnCounter) + i) = *(input_buffer + i);
+                }
+            }
+
+            num_taxa++;                                             // Incrementing num_taxa
+            columnCounter++;
+            bufferCounter = 0;
+            ch = fgetc(in);
+        }
+
+        while(ch != '\n' && rowCounter != 0){
+            // rows after first row
+            while(ch != ','){
+                *(input_buffer + bufferCounter) = ch;
+
+                if(bufferCounter == INPUT_MAX){
+                    return -1;
+                }
+                bufferCounter++;
+                ch = fgetc(in);
+            }
+
+
+            *(input_buffer + bufferCounter) = '\0';
+            double tempDistance = stringToDouble(input_buffer);             // Is it passing by value or ref?
+            *(*(distances + (rowCounter - 1)) + columnCounter) = tempDistance; // Is is fine even though I change the value of tempDistance later?
+
+            columnCounter++;
+            bufferCounter = 0;
+            ch = fgetc(in);
+        }
+
+        columnCounter = 0;
+        rowCounter++;
+    }
+
+    for(int i = 0; i < num_taxa; i++){              // Setting names of nodes from node_names
+        (nodes + i) -> name = *(node_names + i);
+    }
+
+    num_all_nodes = num_taxa;
+    num_active_nodes = num_taxa;
+
+    return 0;
 }
+
+
+
+
 
 /**
  * @brief  Emit a representation of the phylogenetic tree in Newick
