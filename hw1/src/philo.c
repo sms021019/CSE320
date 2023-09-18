@@ -25,6 +25,17 @@ double stringToDouble(const char* str){
     return result;
 }
 
+
+int isSymmetric(){
+    for(int i = 0; i < num_all_nodes; i++){
+        if(*(*(distances + i) + i) != 0){
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
 /**
  * @brief  Read genetic distance data and initialize data structures.
  * @details  This function reads genetic distance data from a specified
@@ -75,6 +86,7 @@ double stringToDouble(const char* str){
  */
 
 int read_distance_data(FILE *in) {
+    fprintf(stderr, "%s\n", "Hi");
     // TO BE IMPLEMENTED
 
     int ch;
@@ -84,7 +96,7 @@ int read_distance_data(FILE *in) {
 
     while((ch = fgetc(in)) != '\0'){                            // Reading a file by single character
         if(ch == '#'){                                              // Checks if the line starts with #
-            while(ch != '#'){                                       // Skip the line
+            while(ch == '#'){                                       // Skip the line
                 while(ch != '\n'){
                     ch = fgetc(in);
                 }
@@ -118,20 +130,26 @@ int read_distance_data(FILE *in) {
 
         while(ch != '\n' && rowCounter != 0){
             // rows after first row
-            while(ch != ','){
-                *(input_buffer + bufferCounter) = ch;
-
-                if(bufferCounter == INPUT_MAX){
-                    return -1;
+            while(ch != ','){                               // Looping by each column
+                if((ch >= '0' && ch <= '9' && columnCounter != 0) || ch == '.' ){
+                    *(input_buffer + bufferCounter) = ch;
+                    if(bufferCounter == INPUT_MAX){
+                        return -1;
+                    }
+                    bufferCounter++;
+                    ch = fgetc(in);
+                }else {
+                    ch = fgetc(in);
                 }
-                bufferCounter++;
-                ch = fgetc(in);
+
             }
 
-
-            *(input_buffer + bufferCounter) = '\0';
-            double tempDistance = stringToDouble(input_buffer);             // Is it passing by value or ref?
-            *(*(distances + (rowCounter - 1)) + columnCounter) = tempDistance; // Is is fine even though I change the value of tempDistance later?
+            if(bufferCounter != 0 && columnCounter != 0){
+                *(input_buffer + bufferCounter) = '\0';
+                double tempDistance = stringToDouble(input_buffer);             // Is it passing by value or ref?
+                *(*(distances + (rowCounter - 1)) + (columnCounter - 1)) = tempDistance;
+                // Is is fine even though I change the value of tempDistance later?
+            }
 
             columnCounter++;
             bufferCounter = 0;
@@ -142,12 +160,17 @@ int read_distance_data(FILE *in) {
         rowCounter++;
     }
 
-    for(int i = 0; i < num_taxa; i++){              // Setting names of nodes from node_names
+    for(int i = 0; i < num_taxa; i++){              // Setting names of nodes from node_names and active_node_map
         (nodes + i) -> name = *(node_names + i);
+        *(active_node_map + i) = i;
     }
 
     num_all_nodes = num_taxa;
     num_active_nodes = num_taxa;
+
+    if(isSymmetric(rowCounter)){
+        return -1;
+    }
 
     return 0;
 }
