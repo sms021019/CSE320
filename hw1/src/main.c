@@ -8,14 +8,9 @@ int main(int argc, char **argv)
 {
     if(validargs(argc, argv))
         USAGE(*argv, EXIT_FAILURE);
-    if(global_options == HELP_OPTION){
-        printf("%s\n", "Hi");
+    if(global_options == HELP_OPTION)
         USAGE(*argv, EXIT_SUCCESS);
-    }
-    if(global_options == 0){
-        fprintf(stdout, "%s\n", "1");
-    }
-
+    // TO BE IMPLEMENTED
     return EXIT_FAILURE;
 }
 
