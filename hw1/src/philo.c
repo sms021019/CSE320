@@ -25,16 +25,6 @@ double stringToDouble(const char* str){
     return result;
 }
 
-int isSymmetric(){
-    for(int i = 0; i < num_all_nodes; i++){
-        if(*(*(distances + i) + i) != 0){
-            return 0;
-        }
-    }
-
-    return 1;
-}
-
 /**
  * @brief  Read genetic distance data and initialize data structures.
  * @details  This function reads genetic distance data from a specified
@@ -85,7 +75,6 @@ int isSymmetric(){
  */
 
 int read_distance_data(FILE *in) {
-    fprintf(stderr, "%s\n", "Hi");
     // TO BE IMPLEMENTED
 
     int ch;
@@ -95,7 +84,7 @@ int read_distance_data(FILE *in) {
 
     while((ch = fgetc(in)) != '\0'){                            // Reading a file by single character
         if(ch == '#'){                                              // Checks if the line starts with #
-            while(ch == '#'){                                       // Skip the line
+            while(ch != '#'){                                       // Skip the line
                 while(ch != '\n'){
                     ch = fgetc(in);
                 }
@@ -129,26 +118,20 @@ int read_distance_data(FILE *in) {
 
         while(ch != '\n' && rowCounter != 0){
             // rows after first row
-            while(ch != ','){                               // Looping by each column
-                if((ch >= '0' && ch <= '9' && columnCounter != 0) || ch == '.' ){
-                    *(input_buffer + bufferCounter) = ch;
-                    if(bufferCounter == INPUT_MAX){
-                        return -1;
-                    }
-                    bufferCounter++;
-                    ch = fgetc(in);
-                }else {
-                    ch = fgetc(in);
+            while(ch != ','){
+                *(input_buffer + bufferCounter) = ch;
+
+                if(bufferCounter == INPUT_MAX){
+                    return -1;
                 }
-
+                bufferCounter++;
+                ch = fgetc(in);
             }
 
-            if(bufferCounter != 0 && columnCounter != 0){
-                *(input_buffer + bufferCounter) = '\0';
-                double tempDistance = stringToDouble(input_buffer);             // Is it passing by value or ref?
-                *(*(distances + (rowCounter - 1)) + (columnCounter - 1)) = tempDistance;
-                // Is is fine even though I change the value of tempDistance later?
-            }
+
+            *(input_buffer + bufferCounter) = '\0';
+            double tempDistance = stringToDouble(input_buffer);             // Is it passing by value or ref?
+            *(*(distances + (rowCounter - 1)) + columnCounter) = tempDistance; // Is is fine even though I change the value of tempDistance later?
 
             columnCounter++;
             bufferCounter = 0;
@@ -159,17 +142,12 @@ int read_distance_data(FILE *in) {
         rowCounter++;
     }
 
-    for(int i = 0; i < num_taxa; i++){              // Setting names of nodes from node_names and active_node_map
+    for(int i = 0; i < num_taxa; i++){              // Setting names of nodes from node_names
         (nodes + i) -> name = *(node_names + i);
-        *(active_node_map + i) = i;
     }
 
     num_all_nodes = num_taxa;
     num_active_nodes = num_taxa;
-
-    if(isSymmetric(rowCounter)){
-        return -1;
-    }
 
     return 0;
 }
@@ -196,16 +174,21 @@ int read_distance_data(FILE *in) {
  * adjacent in the tree, the node closer to the root will be regarded
  * as the "parent" and the node farther from the root as a "child".
  * The outlier node itself will not be included as part of the rooted
- * tree that is output.
+ * tree that is output.  The node to be used as the outlier will be
+ * determined as follows:  If the global variable "outlier_name" is
+ * non-NULL, then the leaf node having that name will be used as
+ * the outlier.  If the value of "outlier_name" is NULL, then the
+ * leaf node having the greatest total distance to the other leaves
+ * will be used as the outlier.
  *
  * @param out  Stream to which to output a rooted tree represented in
  * Newick format.
- * @param x  Pointer to the leaf node to be regarded as the "outlier".
- * The unique node adjacent to the outlier will be the root of the tree
- * that is output.  The outlier node itself will not be part of the tree
- * that is emitted.
+ * @return 0 in case the output is successfully emitted, otherwise -1
+ * if any error occurred.  If the global variable "outlier_name" is
+ * non-NULL, then it is an error if no leaf node with that name exists
+ * in the tree.
  */
-void emit_newick_format(FILE *out) {
+int emit_newick_format(FILE *out) {
     // TO BE IMPLEMENTED
     abort();
 }
@@ -224,8 +207,10 @@ void emit_newick_format(FILE *out) {
  *
  * @param out  Stream to which to output a CSV representation of the
  * synthesized distance matrix.
+ * @return 0 in case the output is successfully emitted, otherwise -1
+ * if any error occurred.
  */
-void emit_distance_matrix(FILE *out) {
+int emit_distance_matrix(FILE *out) {
     // TO BE IMPLEMENTED
     abort();
 }
@@ -272,13 +257,10 @@ void emit_distance_matrix(FILE *out) {
  *
  * @param out  If non-NULL, an output stream to which to emit the edge data.
  * If NULL, then no edge data is output.
+ * @return 0 in case the output is successfully emitted, otherwise -1
+ * if any error occurred.
  */
-void build_taxonomy(FILE *out) {
+int build_taxonomy(FILE *out) {
     // TO BE IMPLEMENTED
-    // 14 - 42
-    // while(int i = 0; i < (num_taxa-2); i++){
-    // }
-
-
-
+    abort();
 }
