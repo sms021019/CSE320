@@ -26,14 +26,127 @@ double stringToDouble(const char* str){
 }
 
 
-int isSymmetric(){
-    for(int i = 0; i < num_all_nodes; i++){
+int isSymmetric(int rowCounter){
+    for(int i = 0; i < rowCounter; i++){
         if(*(*(distances + i) + i) != 0){
             return 0;
         }
     }
 
     return 1;
+}
+
+void printDistances(){
+    for(int i = 0; i < num_all_nodes; i++){
+        for(int j = 0; j < num_all_nodes; j++){
+            printf("%lf,",*(*(distances+j)+i));
+        }
+        printf("\n");
+    }
+}
+
+void printNames(){
+    for(int i = 0; i < num_all_nodes; i++){
+        printf("%s\n", *(node_names+i));
+    }
+}
+
+void printActiveNodeNames(){
+    for(int i =0; i < num_active_nodes; i++){
+        printf("%s\n", *(node_names + *(active_node_map + i)));
+    }
+}
+
+void printActiveNodeMap(){
+    for(int i = 0; i < num_active_nodes; i++){
+        printf("%d\n", *(active_node_map + i));
+    }
+}
+
+void updateSums(){
+    double currentSum = 0;
+    for(int i =0; i < num_all_nodes; i++){
+        for(int j =0; j < num_all_nodes; j++){
+            currentSum = currentSum + *(*(distances + i)+j);
+        }
+        *(row_sums+i) = currentSum;
+    }
+}
+
+double getDistance(int x, int y){
+    return *(*(distances + x)+ y);
+}
+
+double getActiveSum(int index){
+    double tempSum = 0;
+    for(int i = 0; i < num_active_nodes; i++){
+        tempSum = tempSum + getDistance(index, *(active_node_map+i));
+    }
+    return tempSum;
+}
+
+void intToString(int num){
+    int i = 1;
+    *(*(node_names + num)) = '#';
+    do {
+        *(*(node_names + num) + i) = num % 10 + '0';
+        num /= 10;
+        i++;
+    } while (num > 0);
+
+    *(*(node_names + num) + i) = '\0';
+    // int len = i;
+    // for(int j = 0; j < len /2; j++){
+    //     char temp = *(*(node_names + num)+j);
+    //     *(*(node_names + num) + j) = *(*(node_names + num) + len - 1 - j);
+    //     *(*(node_names + num) + len - 1 - j) = temp;
+    // }
+}
+
+void updateDistancesNewNode(int newIndexNode, int xIndexOfMin, int yIndexOfMin){
+    printf("%s%d\n", "newIndexNode: ", newIndexNode);
+    *(*(distances + newIndexNode) + newIndexNode) = 0;
+    for(int i = 0; i < num_all_nodes; i++){
+        *(*(distances + newIndexNode) + i) = 0.5 * (getDistance(xIndexOfMin,i) + getDistance(yIndexOfMin,i) - getDistance(xIndexOfMin,yIndexOfMin));
+        *(*(distances + i) + newIndexNode) = *(*(distances + newIndexNode) + i);
+    }
+}
+
+int findIndexOfMap(int rawIndex){
+    for(int i = 0; i < num_active_nodes; i++){
+        if(*(active_node_map + i) == rawIndex){
+            return i;
+        }
+    }
+    return -1;
+}
+
+void printNodeNeighbors(){
+    for(int i = 0; i < num_all_nodes; i++){
+            printf("%s%s\n", "Current Node: ", *(node_names + i));
+            NODE currentNode = *(nodes + i);
+            for(int j = 0; j < 3; j++){
+                // printf("%s\n", "1");
+                NODE *currentNeighbor = *(currentNode.neighbors + j);
+                // printf("%s\n", "2");
+                if(currentNeighbor != NULL){
+                    printf("%s[%d]: %s\n", "Neighbor Nodes", j, currentNeighbor->name);
+                }
+        }
+    }
+}
+
+void globalStatus(){
+    printf("%s\n", "----------Status check----------");
+    printActiveNodeNames();
+    printActiveNodeMap();
+    printDistances();
+    printNames();
+    printf("%s%d\n", "num_taxa: ", num_taxa);
+    printf("%s%d\n", "num_active_nodes: ", num_active_nodes);
+    printf("%s%d\n", "num_all_nodes: ", num_all_nodes);
+    printf("%s\n", "------------END----------------");
+
 }
 
 /**
@@ -86,7 +199,7 @@ int isSymmetric(){
  */
 
 int read_distance_data(FILE *in) {
-    fprintf(stderr, "%s\n", "Hi");
+    // fprintf(stderr, "%s\n", "Entered read distances data function");
     // TO BE IMPLEMENTED
 
     int ch;
@@ -95,53 +208,69 @@ int read_distance_data(FILE *in) {
     int bufferCounter = 0;
 
     while((ch = fgetc(in)) != '\0'){                            // Reading a file by single character
-        if(ch == '#'){                                              // Checks if the line starts with #
-            while(ch == '#'){                                       // Skip the line
-                while(ch != '\n'){
-                    ch = fgetc(in);
-                }
+        // printf("%s%c\n", "current character:",ch);
+                                            // Checks if the line starts with #
+        while(ch == '#'){                                       // Skip the line
+            while(ch != '\n'){
                 ch = fgetc(in);
+                // printf("%s%c\n", "current character:",ch);
             }
+            ch = fgetc(in);
+            // printf("%s%c\n", "current character:",ch);
         }
+        // printf("%s\n", "No more # line");
 
-        while(ch != '\n' && rowCounter == 0){                      // While loop only for the first line
-            while(ch != ','){                                           // While loop for each columns
+        while(ch != '\n' && rowCounter == 0 && ch != '\0'){                      // While loop only for the first line
+            while(ch != ',' && ch != '\n' && columnCounter != 0){                                       // While loop for each columns
                 *(input_buffer + bufferCounter) = ch;
 
                 if(bufferCounter == INPUT_MAX){                    // If the length of field is longer than maximum input length then return error
+                    // printf("%s\n", "taxa input overflow");
                     return -1;
                 }
                 bufferCounter++;
                 ch = fgetc(in);
+                // printf("%s%c\n", "current character:",ch);
             }
 
             if(bufferCounter != 0){                                 // Skip if the field(buffer) is empty
+                num_taxa++;
                 *(input_buffer + bufferCounter) = '\0';             // Set null character at the end of buffer
                 for(int i = 0; i <= bufferCounter; i++){            // Assigning each characters in a buffer to node_names[column]
-                    *(*(node_names + columnCounter) + i) = *(input_buffer + i);
+                    *(*(node_names + (columnCounter-1)) + i) = *(input_buffer + i);
                 }
             }
 
-            num_taxa++;                                             // Incrementing num_taxa
             columnCounter++;
             bufferCounter = 0;
-            ch = fgetc(in);
+
+            if(ch != '\n'){
+                ch = fgetc(in);
+                // printf("%s%c\n", "current character:",ch);
+                // printf("%s\n", "NEXT COLUMN");
+            }
         }
 
-        while(ch != '\n' && rowCounter != 0){
+        while(ch != '\n' && rowCounter != 0 && ch != '\0'){
+            // printf("%s%d\n", "rowCounter: ",rowCounter);
             // rows after first row
-            while(ch != ','){                               // Looping by each column
+            while(ch != ',' && ch != '\n'){                               // Looping by each column
                 if((ch >= '0' && ch <= '9' && columnCounter != 0) || ch == '.' ){
                     *(input_buffer + bufferCounter) = ch;
                     if(bufferCounter == INPUT_MAX){
+                        // printf("%s\n", "distance input overflow");
                         return -1;
                     }
                     bufferCounter++;
                     ch = fgetc(in);
-                }else {
+                    // printf("%s%c\n", "current character:",ch);
+                }else if(columnCounter == 0){
                     ch = fgetc(in);
+                    // printf("%s%c\n", "current character:",ch);
+                }else{
+                    // printf("%s\n", "Invalid input");
+                    return -1;
                 }
-
             }
 
             if(bufferCounter != 0 && columnCounter != 0){
@@ -153,11 +282,17 @@ int read_distance_data(FILE *in) {
 
             columnCounter++;
             bufferCounter = 0;
-            ch = fgetc(in);
+            if(ch != '\n' && ch != '\0'){
+                ch = fgetc(in);
+                // printf("%s%c\n", "current character:",ch);
+                // printf("%s\n", "NEXT COLUMN");
+            }
         }
 
         columnCounter = 0;
+        if(rowCounter == num_taxa) break;
         rowCounter++;
+        // printf("%s\n", "--NEXT ROW");
     }
 
     for(int i = 0; i < num_taxa; i++){              // Setting names of nodes from node_names and active_node_map
@@ -168,16 +303,54 @@ int read_distance_data(FILE *in) {
     num_all_nodes = num_taxa;
     num_active_nodes = num_taxa;
 
-    if(isSymmetric(rowCounter)){
+    if(isSymmetric(rowCounter) == 0){
+        // printf("%s\n", "not symmetric");
         return -1;
     }
+    // printDistances();
+    // printNames();
 
     return 0;
+}
+
+int isMatchingString(const char *str1, const char *str2){
+    while (*str1 != '\0' && *str2 != '\0') {
+        if (*str1 != *str2) {
+            return 0; // Characters do not match
+        }
+        str1++;
+        str2++;
+    }
+
+    // If both strings have reached the end simultaneously, they match
+    return (*str1 == '\0' && *str2 == '\0');
+}
+
+int checkOutlier(){
+
+    int indexTemp= -1;
+
+    for (int i = 0; i < num_taxa; i++) {
+        if (isMatchingString(outlier_name, *(node_names + i))) {
+            printf("Found a matching string: %s\n", *(node_names + i));
+            indexTemp = i;
+            break; // If you want to stop after the first match
+        }
+    }
+
+    return indexTemp;
 }
 
 
 
 
+// int isLeaf(NODE root){
+//     for(int i = 0; i < 3; i++){
+//         if(*(root.neighbors + i)){
+
+//         }
+//     }
+// }
 
 /**
  * @brief  Emit a representation of the phylogenetic tree in Newick
@@ -211,9 +384,256 @@ int read_distance_data(FILE *in) {
  * non-NULL, then it is an error if no leaf node with that name exists
  * in the tree.
  */
+
+// void printNodeNeighbors(){
+//     for(int i = 0; i < num_all_nodes; i++){
+//             printf("%s%s\n", "Current Node: ", *(node_names + i));
+//             NODE currentNode = *(nodes + i);
+//             for(int j = 0; j < 3; j++){
+//                 // printf("%s\n", "1");
+//                 NODE *currentNeighbor = *(currentNode.neighbors + j);
+//                 // printf("%s\n", "2");
+//                 if(currentNeighbor != NULL){
+//                     printf("%s[%d]: %s\n", "Neighbor Nodes", j, currentNeighbor->name);
+//                 }
+//         }
+//     }
+// }
+
+// int getIndexByNameHelper(NODE temp, int i){
+//     char *tempStr = *(node_names + i);
+//     while(*(temp.name) != '\0' && *(tempStr) != '\0'){
+//         if(*(temp.name) != *(*(node_names + i))){
+//             break;
+//         }
+//         temp.name++;
+//         tempStr++;
+//     }
+//     return (*(temp.name) != '\0' && *(tempStr) != '\0');
+// }
+
+int getIndexByName(NODE temp){
+    int returnIndex = -1;
+    for(int i = 0; i < num_all_nodes; i++){
+        char *tempStr = *(node_names + i);
+        if(isMatchingString(temp.name, tempStr)){
+            returnIndex = i;
+        }
+    }
+    return returnIndex;
+}
+
+double getDistanceByNames(NODE root, NODE *currentNeighbor){
+    int indexOfRoot = getIndexByName(root);
+    int indexOfNeighbor = getIndexByName(*currentNeighbor);
+    return getDistance(indexOfRoot, indexOfNeighbor);
+
+}
+
+
+
+void makeNewickTree(FILE *out, NODE parent, NODE child){
+    int a = -1;
+    int b = -1;
+    // fprintf(out, "%s\n" ,"beginofloop");
+    for(int i = 0; i < 3; i++){
+        // printf("%s\n", "1");
+        NODE *temp = *(child.neighbors + i);
+
+        if(temp != NULL){
+            if(!isMatchingString(parent.name, temp->name)){
+                // printf("%s\n", "2");
+                if(a == -1){
+                    // printf("%s\n", "setting a");
+                    a = i;
+                }else if(b == -1){
+                    // printf("%s\n", "setting b");
+                    b = i;
+                }
+            }
+        }
+        // printf("%s\n", "3");
+    }
+    // fprintf(out, "%s\n" ,"endofloop");
+
+    if(a == -1 && b == -1) return;
+
+    // fprintf(out, "%s\n" ,"1");
+
+    NODE *nodeA = *(child.neighbors + a);
+    NODE *nodeB = *(child.neighbors + b);
+
+    // fprintf(out, "%s\n" ,"2");
+
+
+    fprintf(out, "%s", "(");
+    makeNewickTree(out, child, *(*(child.neighbors + a)));
+    fprintf(out, "%s:%.2lf", nodeA->name, getDistanceByNames(child, nodeA));
+    fprintf(out, ",");
+    makeNewickTree(out, child, *(*(child.neighbors + b)));
+    fprintf(out, "%s:%.2lf", nodeB->name, getDistanceByNames(child, nodeB));
+    fprintf(out, ")");
+
+
+}
+
+void setNewickTree(FILE *out, NODE root){
+
+    NODE *beginningNode = *(root.neighbors);
+    makeNewickTree(out, root, *(beginningNode));
+    fprintf(out, "%s:%.2lf\n", beginningNode->name, getDistanceByNames(root, beginningNode));
+}
+
+
+
+int findLongestNodeIndex(){
+    double temp = *(*(distances));
+    int x;
+    for(int i = 0; i < num_taxa; i++){
+        for(int j = 0; j < num_taxa; j++){
+            if(temp < *(*(distances + i) + j)){
+                temp = *(*(distances + i) + j);
+                x = i;
+            }
+        }
+    }
+
+    return x;
+}
+
 int emit_newick_format(FILE *out) {
-    // TO BE IMPLEMENTED
-    abort();
+    int indexOfOutlier = -1;
+    if(num_taxa == 1) return 0;
+    if(num_taxa == 2){
+        double singleD = getDistance(0, 1);
+        fprintf(out, "%s:%.2lf", *(node_names),singleD);
+    }
+    if(outlier_name != NULL){
+        if(checkOutlier() == -1){
+            return -1;
+        }
+        indexOfOutlier = checkOutlier();
+    }
+
+    while(num_active_nodes > 2){
+        double minimumQ = 0;
+        double temp = 0;
+        int xIndexOfMin = 0;
+        int yIndexOfMin = 0;
+        int a;
+        int b;
+        updateSums();
+        // printf("%s\n", "1");
+
+        for(int i = 0; i < num_active_nodes; i++){
+            for(int j = 0; j < num_active_nodes; j++){
+                if(j != i){
+                    a = *(active_node_map+i);
+                    b = *(active_node_map+j);
+                    temp = (num_active_nodes - 2) * getDistance(a, b) - getActiveSum(a) - getActiveSum(b);
+                    // printf("%s\n", "2");
+
+                    if(i == 0 && j == 0){
+                        minimumQ = temp;
+                        xIndexOfMin = a;
+                        yIndexOfMin = b;
+                    }
+                    if(minimumQ > temp){
+                        minimumQ = temp;
+                        xIndexOfMin = a;
+                        yIndexOfMin = b;
+                    }
+                }
+            }
+        }
+        // printf("%s\n", "END of for loop");
+        // printf("%s%d\n", "xIndexOfMin: ", xIndexOfMin);
+        // printf("%s%d\n", "yIndexOfMin: ", yIndexOfMin);
+        // printf("%s%lf\n", "minimumQ: ", minimumQ);
+
+        // double xToNewDistance = 0.5 * getDistance(xIndexOfMin, yIndexOfMin) + 1/(2*(num_active_nodes - 2)) * (getActiveSum(xIndexOfMin) - getActiveSum(yIndexOfMin));
+        double xToNewDistance = (getDistance(xIndexOfMin,yIndexOfMin) + (getActiveSum(xIndexOfMin) - getActiveSum(yIndexOfMin)) / (num_active_nodes - 2)) / 2;
+        double yToNewDistance = getDistance(xIndexOfMin, yIndexOfMin) - xToNewDistance;
+        int newIndexNode = num_all_nodes;
+        int copyOfNewIndex = newIndexNode;
+        intToString(copyOfNewIndex);
+        // printf("%s\n", "3");
+        (nodes + newIndexNode) -> name = *(node_names + newIndexNode);
+
+        *((nodes + newIndexNode)->neighbors) = (nodes + xIndexOfMin);
+        *((nodes + newIndexNode)->neighbors + 1) = (nodes + yIndexOfMin);
+
+        for(int i = 0; i < 3; i++){
+            if(*((nodes + xIndexOfMin)->neighbors + i) == NULL){
+                *((nodes + xIndexOfMin)->neighbors + i) = (nodes + newIndexNode);
+                break;
+            }
+        }
+
+        for(int i = 0; i < 3; i++){
+            if(*((nodes + yIndexOfMin)->neighbors + i) == NULL){
+                *((nodes + yIndexOfMin)->neighbors + i) = (nodes + newIndexNode);
+                break;
+            }
+        }
+
+        // printf("%s%d\n", "newIndexNode: ", newIndexNode);
+        *(*(distances + newIndexNode) + newIndexNode) = 0;
+        for(int i = 0; i < num_active_nodes; i++){
+            if(*(active_node_map + i) == xIndexOfMin){
+                *(*(distances + newIndexNode) + *(active_node_map + i)) = xToNewDistance;
+                *(*(distances + *(active_node_map + i)) + newIndexNode) = xToNewDistance;
+            }else if(*(active_node_map + i) == yIndexOfMin){
+                *(*(distances + newIndexNode) + *(active_node_map + i)) = yToNewDistance;
+                *(*(distances + *(active_node_map + i)) + newIndexNode) = yToNewDistance;
+            }else{
+                *(*(distances + newIndexNode) + *(active_node_map + i)) = 0.5 * (getDistance(xIndexOfMin,*(active_node_map + i)) + getDistance(yIndexOfMin,*(active_node_map + i)) - getDistance(xIndexOfMin,yIndexOfMin));
+                *(*(distances + *(active_node_map + i)) + newIndexNode) = *(*(distances + newIndexNode) + *(active_node_map + i));
+            }
+        }
+
+        // fprintf(out, "%d,%d,%.2lf\n", xIndexOfMin,newIndexNode,xToNewDistance);
+        // fprintf(out, "%d,%d,%.2lf\n", yIndexOfMin,newIndexNode,yToNewDistance);
+        // printf("%d,%d,%.2lf\n", xIndexOfMin,newIndexNode,xToNewDistance);
+        // printf("%d,%d,%.2lf\n", yIndexOfMin,newIndexNode,yToNewDistance);
+
+        *(active_node_map + findIndexOfMap(xIndexOfMin)) = num_all_nodes;
+        *(active_node_map + findIndexOfMap(yIndexOfMin)) = *(active_node_map + (num_active_nodes-1));
+        num_all_nodes++;
+        num_active_nodes--;
+
+        // globalStatus();
+    }
+
+    if(num_active_nodes == 2){
+        int aIndex = *(active_node_map);
+        int bIndex = *(active_node_map + 1);
+
+        for(int i = 0; i < 3; i++){
+            if(*((nodes + aIndex)->neighbors + i) == NULL){
+                *((nodes + aIndex)->neighbors + i) = (nodes + bIndex);
+                break;
+            }
+        }
+        for(int i = 0; i < 3; i++){
+            if(*((nodes + bIndex)->neighbors + i) == NULL){
+                *((nodes + bIndex)->neighbors + i) = (nodes + aIndex);
+                break;
+            }
+        }
+
+        // fprintf(out, "%d,%d,%.2lf\n", aIndex, bIndex, getDistance(aIndex, bIndex));
+        // printf("%d,%d,%.2lf\n", aIndex, bIndex, getDistance(aIndex, bIndex));
+    }
+
+    if(outlier_name == NULL){
+        indexOfOutlier = findLongestNodeIndex();
+    }
+
+    setNewickTree(out, *(nodes + indexOfOutlier));
+
+    return 0;
+
 }
 
 /**
@@ -233,9 +653,141 @@ int emit_newick_format(FILE *out) {
  * @return 0 in case the output is successfully emitted, otherwise -1
  * if any error occurred.
  */
+
+void printMatrix(FILE *out){
+    fprintf(out, ",");
+    for(int i = 0; i < num_all_nodes + 1; i++){
+        for(int j = 0; j < num_all_nodes; j++){
+            if(i == 0){
+                if(j != num_all_nodes-1) fprintf(out, "%s,", *(node_names + j));
+                else fprintf(out, "%s\n", *(node_names + j));
+            }else{
+                if(j != num_all_nodes-1) fprintf(out, "%.2lf,", *(*(distances + (i - 1)) + j));
+                else fprintf(out, "%.2lf\n", *(*(distances + (i - 1)) + j));
+            }
+        }
+        if(i != num_all_nodes){
+            fprintf(out, "%s,", *(node_names + i));
+        }
+    }
+}
+
 int emit_distance_matrix(FILE *out) {
-    // TO BE IMPLEMENTED
-    abort();
+
+    while(num_active_nodes > 2){
+        double minimumQ = 0;
+        double temp = 0;
+        int xIndexOfMin = 0;
+        int yIndexOfMin = 0;
+        int a;
+        int b;
+        updateSums();
+        // printf("%s\n", "1");
+
+        for(int i = 0; i < num_active_nodes; i++){
+            for(int j = 0; j < num_active_nodes; j++){
+                if(j != i){
+                    a = *(active_node_map+i);
+                    b = *(active_node_map+j);
+                    temp = (num_active_nodes - 2) * getDistance(a, b) - getActiveSum(a) - getActiveSum(b);
+                    // printf("%s\n", "2");
+
+                    if(i == 0 && j == 0){
+                        minimumQ = temp;
+                        xIndexOfMin = a;
+                        yIndexOfMin = b;
+                    }
+                    if(minimumQ > temp){
+                        minimumQ = temp;
+                        xIndexOfMin = a;
+                        yIndexOfMin = b;
+                    }
+                }
+            }
+        }
+        // printf("%s\n", "END of for loop");
+        // printf("%s%d\n", "xIndexOfMin: ", xIndexOfMin);
+        // printf("%s%d\n", "yIndexOfMin: ", yIndexOfMin);
+        // printf("%s%lf\n", "minimumQ: ", minimumQ);
+
+        // double xToNewDistance = 0.5 * getDistance(xIndexOfMin, yIndexOfMin) + 1/(2*(num_active_nodes - 2)) * (getActiveSum(xIndexOfMin) - getActiveSum(yIndexOfMin));
+        double xToNewDistance = (getDistance(xIndexOfMin,yIndexOfMin) + (getActiveSum(xIndexOfMin) - getActiveSum(yIndexOfMin)) / (num_active_nodes - 2)) / 2;
+        double yToNewDistance = getDistance(xIndexOfMin, yIndexOfMin) - xToNewDistance;
+        int newIndexNode = num_all_nodes;
+        int copyOfNewIndex = newIndexNode;
+        intToString(copyOfNewIndex);
+        // printf("%s\n", "3");
+        (nodes + newIndexNode) -> name = *(node_names + newIndexNode);
+
+        *((nodes + newIndexNode)->neighbors) = (nodes + xIndexOfMin);
+        *((nodes + newIndexNode)->neighbors + 1) = (nodes + yIndexOfMin);
+
+        for(int i = 0; i < 3; i++){
+            if(*((nodes + xIndexOfMin)->neighbors + i) == NULL){
+                *((nodes + xIndexOfMin)->neighbors + i) = (nodes + newIndexNode);
+                break;
+            }
+        }
+
+        for(int i = 0; i < 3; i++){
+            if(*((nodes + yIndexOfMin)->neighbors + i) == NULL){
+                *((nodes + yIndexOfMin)->neighbors + i) = (nodes + newIndexNode);
+                break;
+            }
+        }
+
+        // printf("%s%d\n", "newIndexNode: ", newIndexNode);
+        *(*(distances + newIndexNode) + newIndexNode) = 0;
+        for(int i = 0; i < num_active_nodes; i++){
+            if(*(active_node_map + i) == xIndexOfMin){
+                *(*(distances + newIndexNode) + *(active_node_map + i)) = xToNewDistance;
+                *(*(distances + *(active_node_map + i)) + newIndexNode) = xToNewDistance;
+            }else if(*(active_node_map + i) == yIndexOfMin){
+                *(*(distances + newIndexNode) + *(active_node_map + i)) = yToNewDistance;
+                *(*(distances + *(active_node_map + i)) + newIndexNode) = yToNewDistance;
+            }else{
+                *(*(distances + newIndexNode) + *(active_node_map + i)) = 0.5 * (getDistance(xIndexOfMin,*(active_node_map + i)) + getDistance(yIndexOfMin,*(active_node_map + i)) - getDistance(xIndexOfMin,yIndexOfMin));
+                *(*(distances + *(active_node_map + i)) + newIndexNode) = *(*(distances + newIndexNode) + *(active_node_map + i));
+            }
+        }
+
+        // fprintf(out, "%d,%d,%.2lf\n", xIndexOfMin,newIndexNode,xToNewDistance);
+        // fprintf(out, "%d,%d,%.2lf\n", yIndexOfMin,newIndexNode,yToNewDistance);
+        // printf("%d,%d,%.2lf\n", xIndexOfMin,newIndexNode,xToNewDistance);
+        // printf("%d,%d,%.2lf\n", yIndexOfMin,newIndexNode,yToNewDistance);
+
+        *(active_node_map + findIndexOfMap(xIndexOfMin)) = num_all_nodes;
+        *(active_node_map + findIndexOfMap(yIndexOfMin)) = *(active_node_map + (num_active_nodes-1));
+        num_all_nodes++;
+        num_active_nodes--;
+
+        // globalStatus();
+    }
+
+    if(num_active_nodes == 2){
+        int aIndex = *(active_node_map);
+        int bIndex = *(active_node_map + 1);
+
+        for(int i = 0; i < 3; i++){
+            if(*((nodes + aIndex)->neighbors + i) == NULL){
+                *((nodes + aIndex)->neighbors + i) = (nodes + bIndex);
+                break;
+            }
+        }
+        for(int i = 0; i < 3; i++){
+            if(*((nodes + bIndex)->neighbors + i) == NULL){
+                *((nodes + bIndex)->neighbors + i) = (nodes + aIndex);
+                break;
+            }
+        }
+
+        // fprintf(out, "%d,%d,%.2lf\n", aIndex, bIndex, getDistance(aIndex, bIndex));
+        // printf("%d,%d,%.2lf\n", aIndex, bIndex, getDistance(aIndex, bIndex));
+    }
+
+    printMatrix(out);
+    printNodeNeighbors();
+    return 0;
 }
 
 /**
@@ -283,7 +835,120 @@ int emit_distance_matrix(FILE *out) {
  * @return 0 in case the output is successfully emitted, otherwise -1
  * if any error occurred.
  */
+
+
+
+
 int build_taxonomy(FILE *out) {
-    // TO BE IMPLEMENTED
-    abort();
+    // globalStatus();
+    while(num_active_nodes > 2){
+        double minimumQ = 0;
+        double temp = 0;
+        int xIndexOfMin = 0;
+        int yIndexOfMin = 0;
+        int a;
+        int b;
+        updateSums();
+        // printf("%s\n", "1");
+
+        for(int i = 0; i < num_active_nodes; i++){
+            for(int j = 0; j < num_active_nodes; j++){
+                if(j != i){
+                    a = *(active_node_map+i);
+                    b = *(active_node_map+j);
+                    temp = (num_active_nodes - 2) * getDistance(a, b) - getActiveSum(a) - getActiveSum(b);
+                    // printf("%s\n", "2");
+
+                    if(i == 0 && j == 0){
+                        minimumQ = temp;
+                        xIndexOfMin = a;
+                        yIndexOfMin = b;
+                    }
+                    if(minimumQ > temp){
+                        minimumQ = temp;
+                        xIndexOfMin = a;
+                        yIndexOfMin = b;
+                    }
+                }
+            }
+        }
+        // printf("%s\n", "END of for loop");
+        // printf("%s%d\n", "xIndexOfMin: ", xIndexOfMin);
+        // printf("%s%d\n", "yIndexOfMin: ", yIndexOfMin);
+        // printf("%s%lf\n", "minimumQ: ", minimumQ);
+
+        // double xToNewDistance = 0.5 * getDistance(xIndexOfMin, yIndexOfMin) + 1/(2*(num_active_nodes - 2)) * (getActiveSum(xIndexOfMin) - getActiveSum(yIndexOfMin));
+        double xToNewDistance = (getDistance(xIndexOfMin,yIndexOfMin) + (getActiveSum(xIndexOfMin) - getActiveSum(yIndexOfMin)) / (num_active_nodes - 2)) / 2;
+        double yToNewDistance = getDistance(xIndexOfMin, yIndexOfMin) - xToNewDistance;
+        int newIndexNode = num_all_nodes;
+        int copyOfNewIndex = newIndexNode;
+        intToString(copyOfNewIndex);
+        // printf("%s\n", "3");
+        (nodes + newIndexNode) -> name = *(node_names + newIndexNode);
+
+        *((nodes + newIndexNode)->neighbors) = (nodes + xIndexOfMin);
+        *((nodes + newIndexNode)->neighbors + 1) = (nodes + yIndexOfMin);
+
+        for(int i = 0; i < 3; i++){
+            if(*((nodes + xIndexOfMin)->neighbors + i) == NULL){
+                *((nodes + xIndexOfMin)->neighbors + i) = (nodes + newIndexNode);
+                break;
+            }
+        }
+
+        for(int i = 0; i < 3; i++){
+            if(*((nodes + yIndexOfMin)->neighbors + i) == NULL){
+                *((nodes + yIndexOfMin)->neighbors + i) = (nodes + newIndexNode);
+                break;
+            }
+        }
+
+        // printf("%s%d\n", "newIndexNode: ", newIndexNode);
+        *(*(distances + newIndexNode) + newIndexNode) = 0;
+        for(int i = 0; i < num_active_nodes; i++){
+            if(*(active_node_map + i) == xIndexOfMin){
+                *(*(distances + newIndexNode) + *(active_node_map + i)) = xToNewDistance;
+                *(*(distances + *(active_node_map + i)) + newIndexNode) = xToNewDistance;
+            }else if(*(active_node_map + i) == yIndexOfMin){
+                *(*(distances + newIndexNode) + *(active_node_map + i)) = yToNewDistance;
+                *(*(distances + *(active_node_map + i)) + newIndexNode) = yToNewDistance;
+            }else{
+                *(*(distances + newIndexNode) + *(active_node_map + i)) = 0.5 * (getDistance(xIndexOfMin,*(active_node_map + i)) + getDistance(yIndexOfMin,*(active_node_map + i)) - getDistance(xIndexOfMin,yIndexOfMin));
+                *(*(distances + *(active_node_map + i)) + newIndexNode) = *(*(distances + newIndexNode) + *(active_node_map + i));
+            }
+        }
+
+        fprintf(out, "%d,%d,%.2lf\n", xIndexOfMin,newIndexNode,xToNewDistance);
+        fprintf(out, "%d,%d,%.2lf\n", yIndexOfMin,newIndexNode,yToNewDistance);
+        // printf("%d,%d,%.2lf\n", xIndexOfMin,newIndexNode,xToNewDistance);
+        // printf("%d,%d,%.2lf\n", yIndexOfMin,newIndexNode,yToNewDistance);
+
+        *(active_node_map + findIndexOfMap(xIndexOfMin)) = num_all_nodes;
+        *(active_node_map + findIndexOfMap(yIndexOfMin)) = *(active_node_map + (num_active_nodes-1));
+        num_all_nodes++;
+        num_active_nodes--;
+
+        // globalStatus();
+    }
+    if(num_active_nodes == 2){
+        int aIndex = *(active_node_map);
+        int bIndex = *(active_node_map + 1);
+
+        for(int i = 0; i < 3; i++){
+            if(*((nodes + aIndex)->neighbors + i) == NULL){
+                *((nodes + aIndex)->neighbors + i) = (nodes + bIndex);
+                break;
+            }
+        }
+        for(int i = 0; i < 3; i++){
+            if(*((nodes + bIndex)->neighbors + i) == NULL){
+                *((nodes + bIndex)->neighbors + i) = (nodes + aIndex);
+                break;
+            }
+        }
+
+        fprintf(out, "%d,%d,%.2lf\n", aIndex, bIndex, getDistance(aIndex, bIndex));
+        // printf("%d,%d,%.2lf\n", aIndex, bIndex, getDistance(aIndex, bIndex));
+    }
+    return 0;
 }
