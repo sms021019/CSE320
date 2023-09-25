@@ -16,22 +16,33 @@ int main(int argc, char **argv)
             printf("%s\n", "failed");
             return EXIT_FAILURE;
         }
-        build_taxonomy(stdout);
+        if(build_taxonomy(stdout) == -1){
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
     }
     if(global_options == NEWICK_OPTION){
         if(read_distance_data(stdin) != 0){
             printf("%s\n", "failed");
             return EXIT_FAILURE;
         }
-        emit_newick_format(stdout);
+        if(emit_newick_format(stdout) == -1){
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+
     }
     if(global_options == MATRIX_OPTION){
         if(read_distance_data(stdin) != 0){
             printf("%s\n", "failed");
             return EXIT_FAILURE;
         }
-        emit_distance_matrix(stdout);
+        if(emit_distance_matrix(stdout) == -1){
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
     }
+
     return EXIT_FAILURE;
 }
 

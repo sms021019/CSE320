@@ -332,7 +332,7 @@ int checkOutlier(){
 
     for (int i = 0; i < num_taxa; i++) {
         if (isMatchingString(outlier_name, *(node_names + i))) {
-            printf("Found a matching string: %s\n", *(node_names + i));
+            // printf("Found a matching string: %s\n", *(node_names + i));
             indexTemp = i;
             break; // If you want to stop after the first match
         }
@@ -786,7 +786,7 @@ int emit_distance_matrix(FILE *out) {
     }
 
     printMatrix(out);
-    printNodeNeighbors();
+    // printNodeNeighbors();
     return 0;
 }
 
