@@ -11,6 +11,8 @@
 #include "write.h"
 #include "normal.h"
 #include "sort.h"
+#include "error.h"
+#include "report.h"
 
 /*
  * Course grade computation program
@@ -167,7 +169,7 @@ char *argv[];
         fprintf(stderr, "Calculating statistics...\n");
         s = statistics(c);
         if(s == NULL) fatal("There is no data from which to generate reports.");
-        normalize(c, s);
+        normalize(c);
         composites(c);
         sortrosters(c, comparename);
         checkfordups(c->roster);

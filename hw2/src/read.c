@@ -6,11 +6,14 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "global.h"
+#include "error.h"
 #include "gradedb.h"
 #include "stats.h"
 #include "allocate.h"
 #include "read.h"
+
 
 /*
  * Input file stack
@@ -25,6 +28,237 @@ Ifile *ifile;
 char tokenbuf[512];
 char *tokenptr = tokenbuf;
 char *tokenend = tokenbuf;
+
+
+
+/*
+ * See if there is read ahead in the token buffer
+ */
+
+int istoken()
+{
+        if(tokenptr != tokenend) return(TRUE);
+        else return(FALSE);
+}
+
+/*
+ * Determine the size of the token in the buffer
+ */
+
+int tokensize()
+{
+        return(tokenend-tokenptr);
+}
+
+/*
+ * Flush the token readahead buffer
+ */
+
+void flushtoken()
+{
+        tokenptr = tokenend = tokenbuf;
+}
+
+int iswhitespace(c)
+char c;
+{
+        if(c == ',' || c == ':' || c == ' ' ||
+                           c == '\t' || c == '\f') return(TRUE);
+        else return(FALSE);
+}
+
+void gobblewhitespace()
+{
+        char c;
+        if(istoken()) return;
+        while(iswhitespace(c = getc(ifile->fd)));
+        ungetc(c, ifile->fd);
+}
+
+void gobbleblanklines()
+{
+        char c;
+        if(istoken()) return;
+        do {
+          if((c = getc(ifile->fd)) == '#') {
+            while((c = getc(ifile->fd)) != '\n') {
+              if(c == EOF)
+                fatal("(%s:%d) EOF within comment line.",
+                      ifile->name, ifile->line);
+            }
+            ifile->line++;
+            continue;
+          }
+          ungetc(c, ifile->fd);
+          while((c = getc(ifile->fd)) == '\n') {
+            ifile->line++;
+            gobblewhitespace();
+            break;
+          }
+          if(c == '\n') continue;
+          ungetc(c, ifile->fd);
+          return;
+        } while(1);
+}
+
+/*
+ * Return the next character, either from the token readahead buffer,
+ * or else from the input stream.  If we see EOF, it's an error.
+ */
+
+char nextchar()
+{
+        char c;
+        if(istoken()) return(*tokenptr++);
+        flushtoken();
+        if((c = getc(ifile->fd)) == EOF)
+           fatal("(%s:%d) Unexpected EOF.", ifile->name, ifile->line);
+        return(c);
+}
+
+/*
+ * Read the next input token into the token readahead buffer.
+ * If we already have a partial token in the buffer, it is an error
+ */
+
+void advancetoken()
+{
+        char c;
+        if(istoken()) error("(%s:%d) Flushing unread input token.", ifile->name, ifile->line);
+        flushtoken();
+        gobblewhitespace();
+        while((c = getc(ifile->fd)) != EOF) {
+                if(iswhitespace(c) || c == '\n') {
+                        ungetc(c, ifile->fd);
+                        break;
+                }
+                *tokenend++ = c;
+        }
+        if(tokenend != tokenptr) *tokenend++ = '\0';
+}
+
+/*
+ * Read from the current position to the end of the line into the
+ * token buffer.  If we already had a token in the buffer, it's an error.
+ */
+
+void advanceeol()
+{
+        char c;
+        if(istoken()) error("(%s:%d) Flushing unread input token.", ifile->name, ifile->line);
+        flushtoken();
+        gobblewhitespace();
+        while((c = getc(ifile->fd)) != EOF) {
+                if(c == '\n') {
+                        ungetc(c, ifile->fd);
+                        break;
+                }
+                *tokenend++ = c;
+        }
+        if(c == EOF)
+                fatal("(%s:%d) Incomplete line at end of file.", ifile->name, ifile->line);
+        *tokenend++ = '\0';
+}
+
+/*
+ * Check to see that the next token in the input matches a given keyword.
+ * If it does not match, it is an error, and the input is left unchanged.
+ * If it does match, the matched token is removed from the input stream.
+ */
+
+void expecttoken(key)
+char *key;
+{
+        if(!istoken()) advancetoken();
+        if(istoken() && !strcmp(tokenptr, key)) {
+                flushtoken();
+        } else {
+                error("(%s:%d) Expected %s, found %s", ifile->name, ifile->line, key, tokenptr);
+        }
+}
+
+/*
+ * Check to see that the next token in the input matches a given keyword.
+ * If it does not match, FALSE is returned, and the input is unchanged.
+ * If it does match, the matched token is removed from the input stream,
+ * and TRUE is returned.
+ */
+
+int checktoken(key)
+char *key;
+{
+        if(!istoken()) advancetoken();
+        if(istoken() && !strcmp(tokenptr, key)) {
+                flushtoken();
+                return(TRUE);
+        } else {
+                return(FALSE);
+        }
+}
+
+void expectnewline()
+{
+        char c;
+        gobblewhitespace();
+        if((c = nextchar()) == '\n') {
+          ifile->line++;
+          gobbleblanklines();
+          return;
+        }
+        else {
+                error("(%s:%d) Expected newline, scanning ahead.", ifile->name, ifile->line);
+                flushtoken();
+                while((c = nextchar()) != '\n');
+                ifile->line++;
+        }
+}
+
+void expecteof()
+{
+        char c;
+        if(!istoken() && (c = getc(ifile->fd)) == EOF && ifile->prev == NULL)
+           return;
+        else {
+                error("(%s:%d) Expected EOF, skipping excess input.", ifile->name, ifile->line);
+                flushtoken();
+                while(ifile->prev != NULL) previousfile();
+        }
+}
+
+void previousfile()
+{
+        Ifile *prev;
+        if((prev = ifile->prev) == NULL)
+                fatal("(%s:%d) No previous file.", ifile->name, ifile->line);
+        fclose(ifile->fd);
+        free(ifile);
+        ifile = prev;
+        fprintf(stderr, " ]");
+}
+
+void pushfile()
+{
+        Ifile *nfile;
+        char *n;
+
+        advanceeol();
+        if(istoken()) n = newstring(tokenptr, tokensize());
+        else {
+                error("(%s:%d) Expected a file name.", ifile->name, ifile->line);
+                n = newstring("", 0);
+        }
+        flushtoken();
+        expectnewline();
+
+        nfile = newifile();
+        nfile->name = n;
+        nfile->line = 1;
+        if((nfile->fd = fopen(n, "r")) == NULL)
+                fatal("(%s:%d) Can't open data file %s\n", ifile->name, ifile->line, n);
+        ifile = nfile;
+        fprintf(stderr, " [ %s", n);
+        gobbleblanklines();
+}
 
 Course *readfile(root)
 char *root;
@@ -401,234 +635,5 @@ Atype readatype()
         }
         flushtoken();
         return(a);
-}
-
-/*
- * See if there is read ahead in the token buffer
- */
-
-int istoken()
-{
-        if(tokenptr != tokenend) return(TRUE);
-        else return(FALSE);
-}
-
-/*
- * Determine the size of the token in the buffer
- */
-
-int tokensize()
-{
-        return(tokenend-tokenptr);
-}
-
-/*
- * Flush the token readahead buffer
- */
-
-void flushtoken()
-{
-        tokenptr = tokenend = tokenbuf;
-}
-
-int iswhitespace(c)
-char c;
-{
-        if(c == ',' || c == ':' || c == ' ' ||
-                           c == '\t' || c == '\f') return(TRUE);
-        else return(FALSE);
-}
-
-void gobblewhitespace()
-{
-        char c;
-        if(istoken()) return;
-        while(iswhitespace(c = getc(ifile->fd)));
-        ungetc(c, ifile->fd);
-}
-
-void gobbleblanklines()
-{
-        char c;
-        if(istoken()) return;
-        do {
-          if((c = getc(ifile->fd)) == '#') {
-            while((c = getc(ifile->fd)) != '\n') {
-              if(c == EOF)
-                fatal("(%s:%d) EOF within comment line.",
-                      ifile->name, ifile->line);
-            }
-            ifile->line++;
-            continue;
-          }
-          ungetc(c, ifile->fd);
-          while((c = getc(ifile->fd)) == '\n') {
-            ifile->line++;
-            gobblewhitespace();
-            break;
-          }
-          if(c == '\n') continue;
-          ungetc(c, ifile->fd);
-          return;
-        } while(1);
-}
-
-/*
- * Return the next character, either from the token readahead buffer,
- * or else from the input stream.  If we see EOF, it's an error.
- */
-
-char nextchar()
-{
-        char c;
-        if(istoken()) return(*tokenptr++);
-        flushtoken();
-        if((c = getc(ifile->fd)) == EOF)
-           fatal("(%s:%d) Unexpected EOF.", ifile->name, ifile->line);
-        return(c);
-}
-
-/*
- * Read the next input token into the token readahead buffer.
- * If we already have a partial token in the buffer, it is an error
- */
-
-void advancetoken()
-{
-        char c;
-        if(istoken()) error("(%s:%d) Flushing unread input token.", ifile->name, ifile->line);
-        flushtoken();
-        gobblewhitespace();
-        while((c = getc(ifile->fd)) != EOF) {
-                if(iswhitespace(c) || c == '\n') {
-                        ungetc(c, ifile->fd);
-                        break;
-                }
-                *tokenend++ = c;
-        }
-        if(tokenend != tokenptr) *tokenend++ = '\0';
-}
-
-/*
- * Read from the current position to the end of the line into the
- * token buffer.  If we already had a token in the buffer, it's an error.
- */
-
-void advanceeol()
-{
-        char c;
-        if(istoken()) error("(%s:%d) Flushing unread input token.", ifile->name, ifile->line);
-        flushtoken();
-        gobblewhitespace();
-        while((c = getc(ifile->fd)) != EOF) {
-                if(c == '\n') {
-                        ungetc(c, ifile->fd);
-                        break;
-                }
-                *tokenend++ = c;
-        }
-        if(c == EOF)
-                fatal("(%s:%d) Incomplete line at end of file.", ifile->name, ifile->line);
-        *tokenend++ = '\0';
-}
-
-/*
- * Check to see that the next token in the input matches a given keyword.
- * If it does not match, it is an error, and the input is left unchanged.
- * If it does match, the matched token is removed from the input stream.
- */
-
-void expecttoken(key)
-char *key;
-{
-        if(!istoken()) advancetoken();
-        if(istoken() && !strcmp(tokenptr, key)) {
-                flushtoken();
-        } else {
-                error("(%s:%d) Expected %s, found %s", ifile->name, ifile->line, key, tokenptr);
-        }
-}
-
-/*
- * Check to see that the next token in the input matches a given keyword.
- * If it does not match, FALSE is returned, and the input is unchanged.
- * If it does match, the matched token is removed from the input stream,
- * and TRUE is returned.
- */
-
-int checktoken(key)
-char *key;
-{
-        if(!istoken()) advancetoken();
-        if(istoken() && !strcmp(tokenptr, key)) {
-                flushtoken();
-                return(TRUE);
-        } else {
-                return(FALSE);
-        }
-}
-
-void expectnewline()
-{
-        char c;
-        gobblewhitespace();
-        if((c = nextchar()) == '\n') {
-          ifile->line++;
-          gobbleblanklines();
-          return;
-        }
-        else {
-                error("(%s:%d) Expected newline, scanning ahead.", ifile->name, ifile->line);
-                flushtoken();
-                while((c = nextchar()) != '\n');
-                ifile->line++;
-        }
-}
-
-void expecteof()
-{
-        char c;
-        if(!istoken() && (c = getc(ifile->fd)) == EOF && ifile->prev == NULL)
-           return;
-        else {
-                error("(%s:%d) Expected EOF, skipping excess input.", ifile->name, ifile->line);
-                flushtoken();
-                while(ifile->prev != NULL) previousfile();
-        }
-}
-
-void previousfile()
-{
-        Ifile *prev;
-        if((prev = ifile->prev) == NULL)
-                fatal("(%s:%d) No previous file.", ifile->name, ifile->line);
-        fclose(ifile->fd);
-        free(ifile);
-        ifile = prev;
-        fprintf(stderr, " ]");
-}
-
-void pushfile(e)
-{
-        Ifile *nfile;
-        char *n;
-
-        advanceeol();
-        if(istoken()) n = newstring(tokenptr, tokensize());
-        else {
-                error("(%s:%d) Expected a file name.", ifile->name, ifile->line);
-                n = newstring("", 0);
-        }
-        flushtoken();
-        expectnewline();
-
-        nfile = newifile();
-        nfile->name = n;
-        nfile->line = 1;
-        if((nfile->fd = fopen(n, "r")) == NULL)
-                fatal("(%s:%d) Can't open data file %s\n", ifile->name, ifile->line, n);
-        ifile = nfile;
-        fprintf(stderr, " [ %s", n);
-        gobbleblanklines();
 }
 

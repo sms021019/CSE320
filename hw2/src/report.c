@@ -15,7 +15,7 @@
 #include <time.h>
 #endif
 
-reportparams(fd, fn, c)
+void reportparams(fd, fn, c)
 FILE *fd;
 char *fn;
 Course *c;
@@ -34,7 +34,7 @@ Course *c;
         fprintf(fd, "\n");
 }
 
-reportfreqs(fd, s)
+void reportfreqs(fd, s)
 FILE *fd;
 Stats *s;
 {
@@ -114,7 +114,7 @@ float q;
 float quantiles[] = { 10.0, 25.0, 50.0, 75.0, 90.0 };
 float scores[]    = {  0.0,  0.0,  0.0,  0.0,  0.0 };
 
-reportquantilesummaries(fd, s)
+void reportquantilesummaries(fd, s)
 FILE *fd;
 Stats *s;
 {
@@ -162,7 +162,7 @@ Stats *s;
                   r = (scores[i] - min) / (max - min);
                   fprintf(fd, "%6.2f", r);
                 } else {
-                  fprintf(fd, "***.**", r);
+                  fprintf(fd, "%3.2f", r);
                 }
                 fprintf(fd, "\n");
               }
@@ -173,7 +173,7 @@ Stats *s;
         fprintf(fd, "\n");
 }
 
-reportquantiles(fd, s)
+void reportquantiles(fd, s)
 FILE *fd;
 Stats *s;
 {
@@ -197,7 +197,7 @@ Stats *s;
                 fprintf(fd, "(%6.2f,%6.2f)", fp->score,
                         (float)fp->numless * 100.0/csp->tallied);
               } else {
-                fprintf(fd, "(%6.2f,***.**)", fp->score,
+                fprintf(fd, "(%6.2f,%3.2f)", fp->score,
                         (float)fp->numless * 100.0/csp->tallied);
               }
            }
@@ -218,7 +218,7 @@ Stats *s;
                     fprintf(fd, "(%6.2f,%6.2f)", fp->score,
                             (float)fp->numless * 100.0/ssp->tallied);
                  } else {
-                    fprintf(fd, "(%6.2f,***.**)", fp->score,
+                    fprintf(fd, "(%6.2f,%3.2f)", fp->score,
                             (float)fp->numless * 100.0/ssp->tallied);
                  }
               }
@@ -229,7 +229,7 @@ Stats *s;
         fprintf(fd, "\n");
 }
 
-reportmoments(fd, s)
+void reportmoments(fd, s)
 FILE *fd;
 Stats *s;
 {
@@ -256,9 +256,10 @@ Stats *s;
         fprintf(fd, "\n");
 }
 
-reportscores(fd, c, nm)
+void reportscores(fd, c, nm)
 FILE *fd;
 Course *c;
+int nm;
 {
         Assignment *ap;
         Student *stp;
@@ -290,9 +291,10 @@ Course *c;
         fprintf(fd, "\n");
 }
 
-reportcomposites(fd, c, nm)
+void reportcomposites(fd, c, nm)
 FILE *fd;
 Course *c;
+int nm;
 {
         Student *stp;
         Score *scp;
@@ -314,7 +316,7 @@ Course *c;
  * the vertical axis to a scale of 0 to 20.
  */
 
-reporthistos(fd, c, s)
+void reporthistos(fd, c, s)
 FILE *fd;
 Course *c;
 Stats *s;
@@ -378,7 +380,7 @@ Stats *s;
         }
 }
 
-histo(fd, bins, min, max, cnt)
+void histo(fd, bins, min, max, cnt)
 FILE *fd;
 int bins[], cnt;
 float min, max;
@@ -415,7 +417,7 @@ float min, max;
     fprintf(fd, "    0%% -+------------------------------------------------+\n");
     fprintf(fd, "     %6.2f                                         %6.2f\n\n",
             min, max);
-}    
+}
 
 void
 reporttabs(FILE *fd, Course *c, int nm)

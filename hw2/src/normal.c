@@ -10,6 +10,8 @@
 #include "stats.h"
 #include "allocate.h"
 #include "normal.h"
+#include <string.h>
+#include "error.h"
 
 /*
  * Normalize scores:
@@ -20,9 +22,7 @@
  *              options set for that score and for the assignment.
  */
 
-void normalize(c, s)
-Course *c;
-Stats *s;
+void normalize(Course *c)
 {
         Student *stp;
         Score *rscp, *nscp;
@@ -107,6 +107,7 @@ Sectionstats *ssp;
                          }
                         return(linear(s, ssp->mean, ssp->stddev, a->mean, a->stddev));
                 }
+                break;
         case SCALE:
                 if(a->max < EPSILON) {
                   warning("Declared maximum score of %s too small for normalization.",

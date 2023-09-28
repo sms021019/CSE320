@@ -3,6 +3,8 @@
 #include "sort.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "error.h"
+#include <string.h>
 
 /*
  * Sort the Class and Section Rosters
@@ -135,7 +137,6 @@ Student *s1, *s2;
 int compareid(s1, s2)
 Student *s1, *s2;
 {
-        int c;
         return(strcmp(s1->id, s2->id));
 }
 
