@@ -5,9 +5,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include "global.h"
 
-int errors;
-int warnings;
+// int errors;
+// int warnings;
 int dbflag = 1;
 
 void fatal(char *fmt, ...)

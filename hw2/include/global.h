@@ -5,6 +5,8 @@
 
 #define TRUE 1
 #define FALSE 0
+extern int errors;
+extern int warnings;
 
 #define EPSILON 1e-6            /* Don't divide by anything smaller */
 

@@ -150,6 +150,7 @@ Sectionstats *ssp;
                         return((float)fp->numless*100.0/n);
                 }
         }
+        return (s); // might prob
 }
 
 /*
