@@ -168,17 +168,25 @@ char *argv[];
 
         fprintf(stderr, "Calculating statistics...\n");
         s = statistics(c);
+        printf("%s\n", "1");
         if(s == NULL) fatal("There is no data from which to generate reports.");
+        printf("%s\n", "2");
         normalize(c);
+        printf("%s\n", "3");
         composites(c);
+        printf("%s\n", "4");
         sortrosters(c, comparename);
+        printf("%s\n", "5");
         checkfordups(c->roster);
+        printf("%s\n", "6");
         if(collate) {
                 fprintf(stderr, "Dumping collated data...\n");
                 writecourse(stdout, c);
                 exit(errors ? EXIT_FAILURE : EXIT_SUCCESS);
         }
+        printf("%s\n", "7");
         sortrosters(c, compare);
+        printf("%s\n", "8");
 
         fprintf(stderr, "Producing reports...\n");
         reportparams(stdout, ifile, c);

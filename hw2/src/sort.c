@@ -151,10 +151,12 @@ Student *s1, *s2;
 void checkfordups(sp)
 Student *sp;
 {
+        printf("%s\n", "*");
         while(sp != NULL && sp->cnext != NULL) {
-                if(!comparename(sp, sp->cnext))
+                if(!comparename(sp, sp->cnext)){
                         warning("Duplicate entry for student: %s, %s.",
                                 sp->surname, sp->name);
+                }
                 sp = sp->cnext;
         }
 }
