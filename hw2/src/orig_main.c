@@ -68,7 +68,7 @@ static struct option_info {
                   "Suppress printing of students' names."}
 };
 
-static char *short_options = "";
+static char *short_options = "rcank:";
 static struct option long_options[12];
 
 static void init_options() {
@@ -108,11 +108,29 @@ char *argv[];
         while(optind < argc) {
             if((optval = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
                 switch(optval) {
+                case 'r': report++; break;
                 case REPORT: report++; break;
                 case COLLATE: collate++; break;
+                case 'c': collate++; break;
                 case TABSEP: tabsep++; break;
                 case NONAMES: nonames++; break;
+                case 'n': nonames++; break;
+
                 case SORTBY:
+                    if(!strcmp(optarg, "name"))
+                        compare = comparename;
+                    else if(!strcmp(optarg, "id"))
+                        compare = compareid;
+                    else if(!strcmp(optarg, "score"))
+                        compare = comparescore;
+                    else {
+                        fprintf(stderr,
+                                "Option '%s' requires argument from {name, id, score}.\n\n",
+                                option_table[(int)optval].name);
+                        usage(argv[0]);
+                    }
+                    break;
+                case 'k':
                     if(!strcmp(optarg, "name"))
                         compare = comparename;
                     else if(!strcmp(optarg, "id"))
@@ -134,6 +152,10 @@ char *argv[];
                 case INDIVIDUALS: scores++; break;
                 case HISTOGRAMS: histograms++; break;
                 case ALLOUTPUT:
+                    freqs++; quantiles++; summaries++; moments++;
+                    composite++; scores++; histograms++; tabsep++;
+                    break;
+                case 'a':
                     freqs++; quantiles++; summaries++; moments++;
                     composite++; scores++; histograms++; tabsep++;
                     break;
@@ -159,6 +181,7 @@ char *argv[];
         }
 
         fprintf(stderr, "Reading input data...\n");
+
         c = readfile(ifile);
         if(errors) {
            printf("%d error%s found, so no computations were performed.\n",

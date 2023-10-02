@@ -75,8 +75,9 @@ int compare();
                 sp = stab[i];
         }
         stnxt(sp, NULL);
+        sp = stab[0];
         free(stab);
-        return(stab[0]);
+        return(sp);
 }
 
 /*
@@ -151,7 +152,6 @@ Student *s1, *s2;
 void checkfordups(sp)
 Student *sp;
 {
-        printf("%s\n", "*");
         while(sp != NULL && sp->cnext != NULL) {
                 if(!comparename(sp, sp->cnext)){
                         warning("Duplicate entry for student: %s, %s.",
