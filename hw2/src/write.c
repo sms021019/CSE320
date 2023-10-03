@@ -79,7 +79,8 @@ Section *s;
 {
         Student *sp;
         fprintf(fd, " SECTION %s\n", s->name);
-        writeassistant(fd, s->assistant);
+        if(s->assistant != NULL)
+                writeassistant(fd, s->assistant);
         for(sp = s->roster; sp != NULL; sp = sp->next)
                 writestudent(fd, sp);
 }

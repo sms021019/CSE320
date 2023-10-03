@@ -140,7 +140,7 @@ Stats *s;
                r = (scores[i] - min) / (max - min);
                fprintf(fd, "%6.2f", r);
              } else {
-               fprintf(fd, "%3.2f", r);
+               fprintf(fd, "***.**");
              }
              fprintf(fd, "\n");
            }
@@ -162,7 +162,7 @@ Stats *s;
                   r = (scores[i] - min) / (max - min);
                   fprintf(fd, "%6.2f", r);
                 } else {
-                  fprintf(fd, "%3.2f", r);
+                  fprintf(fd, "***.**");
                 }
                 fprintf(fd, "\n");
               }
@@ -329,7 +329,7 @@ float min, max;
      */
     for(row = 20; row >= 0; row--) {
       if(row == 20)
-        fprintf(fd, "        ");
+        fprintf(fd, "       ^");
       else if(row%4 == 3) {
         fprintf(fd, "%5.1f%% |", (float)(100*cmax/cnt)*(row+1)/20);
       } else {
@@ -365,7 +365,7 @@ Stats *s;
         Student *stp;
         Freqs *fp;
         int col, pct, cnt;
-        int bins[20];
+        int bins[50];
         float min, max, diff;
 
         fprintf(fd, "HISTOGRAMS\n\n");
@@ -383,7 +383,7 @@ Stats *s;
           if(stp->composite > max) max = stp->composite;
           cnt++;
         }
-        for(col = 0; col < 20; col++) bins[col] = 0;
+        for(col = 0; col < 50; col++) bins[col] = 0;
         diff = (max-min == 0.0) ? 1.0 : (max-min);
         for(stp = c->roster; stp != NULL; stp = stp->cnext) {
           pct = 49*(stp->composite-min)/diff;
@@ -406,7 +406,7 @@ Stats *s;
                 if(csp->max == 0.0) max = 1.0;
                 else max = csp->max;
            } else max = csp->asgt->max;
-           for(col = 0; col < 20; col++) bins[col] = 0;
+           for(col = 0; col < 50; col++) bins[col] = 0;
            for(fp = csp->freqs; fp != NULL; fp = fp->next) {
                 if(fp->score > max) pct = 49;
                 else pct = 49*fp->score/max;
