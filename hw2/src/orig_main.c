@@ -93,6 +93,94 @@ static void usage();
 
 int errors, warnings;
 
+
+void freeScore(Score *sc){
+    if(sc == NULL) return;
+    free(sc->code);
+    freeScore(sc->next);
+    free(sc);
+}
+
+void freeStudent(Student *st){
+    if(st == NULL) return;
+    free(st->id);
+    free(st->surname);
+    free(st->name);
+    freeScore(st->rawscores);
+    freeScore(st->normscores);
+    freeStudent(st->cnext);
+    free(st);
+}
+
+void freeSection(Section *s){
+    if(s == NULL) return;
+    free(s->name);
+    if(s->assistant != NULL){
+        free(s->assistant->surname);
+        free(s->assistant->name);
+        free(s->assistant);
+    }
+    freeSection(s->next);
+    free(s);
+}
+
+void freeAssignment(Assignment *a){
+    if(a == NULL) return;
+    free(a->name);
+    free(a->atype);
+    freeAssignment(a->next);
+    free(a);
+}
+
+void freeCourse(Course *c){
+    if(c == NULL) return;
+    free(c->number);
+    free(c->title);
+    free(c->professor->surname);
+    free(c->professor->name);
+    free(c->professor);
+    freeAssignment(c->assignments);
+    freeSection(c->sections);
+    freeStudent(c->roster);
+    free(c);
+}
+
+void freeFreq(Freqs *f){
+    if(f ==NULL) return;
+    freeFreq(f->next);
+    free(f);
+}
+
+void freeSectionStats(Sectionstats *ss){
+    if(ss == NULL) return;
+    freeFreq(ss->freqs);
+    freeSectionStats(ss->next);
+    free(ss);
+}
+
+void freeClassStats(Classstats *cs){
+    if(cs==NULL) return;
+    freeFreq(cs->freqs);
+    freeSectionStats(cs->sstats);
+    freeClassStats(cs->next);
+    free(cs);
+}
+
+void freeStats(Stats *s){
+    if(s == NULL) return;
+    freeClassStats(s->cstats);
+    free(s);
+}
+
+// void freeIfile(Ifile *f){
+//     if(f == NULL) return;
+//     free(f->name);
+//     fclose(f->fd);
+//     freeIfile(f->prev);
+//     free(f);
+// }
+
+
 int orig_main(argc, argv)
 int argc;
 char *argv[];
@@ -222,11 +310,19 @@ char *argv[];
         if(scores) reportscores(stdout, c, nonames);
         if(tabsep) reporttabs(stdout, c, nonames);
 
+        freeCourse(c);
+        freeStats(s);
+        initFreeIfile();
+
+
         fprintf(stderr, "\nProcessing complete.\n");
         printf("%d warning%s issued.\n", warnings+errors,
                warnings+errors == 1? " was": "s were");
         exit(errors ? EXIT_FAILURE : EXIT_SUCCESS);
 }
+
+
+
 
 void usage(name)
 char *name;

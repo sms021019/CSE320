@@ -33,3 +33,4 @@ void expecteof();
 void expectnewline();
 void pushfile();
 void previousfile();
+void initFreeIfile();

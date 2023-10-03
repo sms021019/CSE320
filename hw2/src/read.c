@@ -637,3 +637,17 @@ Atype readatype()
         return(a);
 }
 
+void freeIfile(Ifile *ifile){
+        if(ifile == NULL) return;
+        free(ifile->name);
+        // fclose(ifile->fd);
+        freeIfile(ifile->prev);
+        free(ifile);
+}
+
+void initFreeIfile(){
+        freeIfile(ifile);
+}
+
+
+
