@@ -67,8 +67,8 @@ static struct option_info {
                   "Sort by {name, id, score}."},
  {NONAMES,        "nonames",   'n',      no_argument, NULL,
                   "Suppress printing of students' names."},
- {OUTPUT,         "output",    'o',      required_argument, "filename",
-                  "Sent output to the specified filename."}
+ {OUTPUT,         "output",    'o',      required_argument, "file",
+                  "Specify file to be used for output."}
 };
 
 static char *short_options = "rcank:o:";
