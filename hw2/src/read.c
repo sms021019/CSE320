@@ -231,10 +231,19 @@ void previousfile()
         if((prev = ifile->prev) == NULL)
                 fatal("(%s:%d) No previous file.", ifile->name, ifile->line);
         fclose(ifile->fd);
+        free(ifile->name);
         free(ifile);
         ifile = prev;
         fprintf(stderr, " ]");
 }
+
+// void freeIfile(Ifile *ifile){
+//         if(ifile == NULL) return;
+//         free(ifile->name);
+//         fclose(ifile->fd);
+//         freeIfile(ifile->prev);
+//         free(ifile);
+// }
 
 void pushfile()
 {
@@ -253,6 +262,7 @@ void pushfile()
         nfile = newifile();
         nfile->name = n;
         nfile->line = 1;
+        nfile->prev = ifile;
         if((nfile->fd = fopen(n, "r")) == NULL)
                 fatal("(%s:%d) Can't open data file %s\n", ifile->name, ifile->line, n);
         ifile = nfile;
@@ -637,16 +647,10 @@ Atype readatype()
         return(a);
 }
 
-void freeIfile(Ifile *ifile){
-        if(ifile == NULL) return;
-        free(ifile->name);
-        // fclose(ifile->fd);
-        freeIfile(ifile->prev);
-        free(ifile);
-}
+
 
 void initFreeIfile(){
-        freeIfile(ifile);
+        free(ifile);
 }
 
 
