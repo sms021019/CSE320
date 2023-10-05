@@ -297,6 +297,7 @@ Course *readcourse()
         Course *c;
         expecttoken("COURSE");
         c = newcourse();
+        // c->roster = NULL;
         c->number = readid();
         c->title = readname();
         c->professor = readprofessor();

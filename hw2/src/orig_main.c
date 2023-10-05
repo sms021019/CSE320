@@ -104,13 +104,20 @@ void freeScore(Score *sc){
     free(sc);
 }
 
+void freeScore2(Score *sc){
+    if(sc == NULL) return;
+    free(sc->code);
+    freeScore2(sc->next);
+    free(sc);
+}
+
 void freeStudent(Student *st){
     if(st == NULL) return;
     free(st->id);
     free(st->surname);
     free(st->name);
     freeScore(st->rawscores);
-    freeScore(st->normscores);
+    freeScore2(st->normscores);
     freeStudent(st->cnext);
     free(st);
 }
@@ -149,7 +156,7 @@ void freeCourse(Course *c){
 }
 
 void freeFreq(Freqs *f){
-    if(f ==NULL) return;
+    if(f == NULL) return;
     freeFreq(f->next);
     free(f);
 }
@@ -192,8 +199,8 @@ char *argv[];
         while(optind < argc) {
             if((optval = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
                 switch(optval) {
-                case 'r': report++; break;
                 case REPORT: report++; break;
+                case 'r': report++; break;
                 case COLLATE: collate++; break;
                 case 'c': collate++; break;
                 case TABSEP: tabsep++; break;
@@ -294,25 +301,22 @@ char *argv[];
 
         fprintf(stderr, "Calculating statistics...\n");
         s = statistics(c);
-        printf("%s\n", "1");
         if(s == NULL) fatal("There is no data from which to generate reports.");
-        printf("%s\n", "2");
         normalize(c);
-        printf("%s\n", "3");
         composites(c);
-        printf("%s\n", "4");
         sortrosters(c, comparename);
-        printf("%s\n", "5");
         checkfordups(c->roster);
-        printf("%s\n", "6");
         if(collate) {
                 fprintf(stderr, "Dumping collated data...\n");
                 writecourse(outputFile, c);
+
+                freeCourse(c);
+                freeStats(s);
+                initFreeIfile();
+
                 exit(errors ? EXIT_FAILURE : EXIT_SUCCESS);
         }
-        printf("%s\n", "7");
         sortrosters(c, compare);
-        printf("%s\n", "8");
 
         fprintf(stderr, "Producing reports...\n");
         reportparams(outputFile, ifile, c);

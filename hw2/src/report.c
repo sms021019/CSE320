@@ -329,7 +329,7 @@ float min, max;
      */
     for(row = 20; row >= 0; row--) {
       if(row == 20)
-        fprintf(fd, "       ^");
+        fprintf(fd, "        ");
       else if(row%4 == 3) {
         fprintf(fd, "%5.1f%% |", (float)(100*cmax/cnt)*(row+1)/20);
       } else {
