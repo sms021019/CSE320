@@ -280,17 +280,6 @@ void freeStudent(Student *st){
     free(st);
 }
 
-// void freeSectionStudent(Student *st){
-//     if(st == NULL) return;
-//     free(st->id);
-//     free(st->surname);
-//     free(st->name);
-//     freeScore(st->rawscores);
-//     freeScore(st->normscores);
-//     // freeSectionStudent(st->next);
-//     free(st);
-// }
-
 void freeSection(Section *s){
     if(s == NULL) return;
     free(s->name);
@@ -299,7 +288,6 @@ void freeSection(Section *s){
         free(s->assistant->name);
         free(s->assistant);
     }
-    // freeSectionStudent(s->roster);
     freeSection(s->next);
     free(s);
 }
