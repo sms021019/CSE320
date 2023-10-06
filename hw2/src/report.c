@@ -197,7 +197,7 @@ Stats *s;
                 fprintf(fd, "(%6.2f,%6.2f)", fp->score,
                         (float)fp->numless * 100.0/csp->tallied);
               } else {
-                fprintf(fd, "(%6.2f,%3.2f)", fp->score,
+                fprintf(fd, "(%6.2f,%6.2f)", fp->score,
                         (float)fp->numless * 100.0/csp->tallied);
               }
            }
@@ -218,7 +218,7 @@ Stats *s;
                     fprintf(fd, "(%6.2f,%6.2f)", fp->score,
                             (float)fp->numless * 100.0/ssp->tallied);
                  } else {
-                    fprintf(fd, "(%6.2f,%3.2f)", fp->score,
+                    fprintf(fd, "(%6.2f,%6.2f)", fp->score,
                             (float)fp->numless * 100.0/ssp->tallied);
                  }
               }

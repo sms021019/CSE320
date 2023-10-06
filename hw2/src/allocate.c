@@ -67,6 +67,7 @@ Score *newscore()
         Score *s;
         if((s = (Score *)malloc(sizeof(Score))) == NULL)
                 fatal(memerr);
+        s->code = NULL;
         return(s);
 }
 
