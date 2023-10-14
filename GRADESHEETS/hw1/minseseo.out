@@ -1,0 +1,208 @@
+[----] Criterion v2.3.3
+[====] Running 7 tests from basecode_suite:
+[RUN ] basecode_suite::help_system_test
+[PASS] basecode_suite::help_system_test: (0.02s)
+[RUN ] basecode_suite::philo_basic_test
+RUN: ulimit -t 10; ulimit -f 2000; bin/philo < ./tests/rsrc/wikipedia.csv > test_output/wikipedia_output_1.out
+[PASS] basecode_suite::philo_basic_test: (0.09s)
+[RUN ] basecode_suite::validargs_error_test
+[PASS] basecode_suite::validargs_error_test: (0.00s)
+[RUN ] basecode_suite::validargs_help_test
+[PASS] basecode_suite::validargs_help_test: (0.00s)
+[RUN ] basecode_suite::validargs_matrix_test
+[PASS] basecode_suite::validargs_matrix_test: (0.00s)
+[RUN ] basecode_suite::validargs_newick_test
+[PASS] basecode_suite::validargs_newick_test: (0.00s)
+[RUN ] basecode_suite::validargs_no_flags_test
+[PASS] basecode_suite::validargs_no_flags_test: (0.00s)
+[====] Running 18 tests from blackbox_test_suite:
+[RUN ] blackbox_test_suite::edge_data_output_1
+RUN: ulimit -t 10; ulimit -f 2000; bin/philo < ./tests/rsrc/test_data_1.csv > test_output/edge_data_output_1.out
+[PASS] blackbox_test_suite::edge_data_output_1: (0.01s)
+[RUN ] blackbox_test_suite::edge_data_output_2
+RUN: ulimit -t 10; ulimit -f 2000; bin/philo < ./tests/rsrc/test_data_2.csv > test_output/edge_data_output_2.out
+[PASS] blackbox_test_suite::edge_data_output_2: (0.02s)
+[RUN ] blackbox_test_suite::edge_data_output_3
+RUN: ulimit -t 10; ulimit -f 2000; bin/philo < ./tests/rsrc/test_data_3.csv > test_output/edge_data_output_3.out
+[PASS] blackbox_test_suite::edge_data_output_3: (0.02s)
+[RUN ] blackbox_test_suite::edge_data_output_4
+RUN: ulimit -t 10; ulimit -f 2000; bin/philo < ./tests/rsrc/test_data_4.csv > test_output/edge_data_output_4.out
+[PASS] blackbox_test_suite::edge_data_output_4: (0.02s)
+[RUN ] blackbox_test_suite::edge_data_output_5
+RUN: ulimit -t 10; ulimit -f 2000; bin/philo < ./tests/rsrc/test_data_5.csv > test_output/edge_data_output_5.out
+[PASS] blackbox_test_suite::edge_data_output_5: (0.25s)
+[RUN ] blackbox_test_suite::matrix_data_output_1
+RUN: ulimit -t 10; ulimit -f 2000;bin/philo -m < ./tests/rsrc/test_data_1.csv > test_output/matrix_data_output_1.out
+RUN: cmp ./tests/rsrc/test_data_1_matrix_0.csv test_output/matrix_data_output_1.out
+[PASS] blackbox_test_suite::matrix_data_output_1: (0.03s)
+[RUN ] blackbox_test_suite::matrix_data_output_2
+RUN: ulimit -t 10; ulimit -f 2000;bin/philo -m < ./tests/rsrc/test_data_2.csv > test_output/matrix_data_output_2.out
+RUN: cmp ./tests/rsrc/test_data_2_matrix_0.csv test_output/matrix_data_output_2.out
+[PASS] blackbox_test_suite::matrix_data_output_2: (0.03s)
+[RUN ] blackbox_test_suite::matrix_data_output_3
+RUN: ulimit -t 10; ulimit -f 2000;bin/philo -m < ./tests/rsrc/test_data_3.csv > test_output/matrix_data_output_3.out
+RUN: cmp ./tests/rsrc/test_data_3_matrix_0.csv test_output/matrix_data_output_3.out
+RUN: cmp ./tests/rsrc/test_data_3_matrix_1.csv test_output/matrix_data_output_3.out
+./tests/rsrc/test_data_3_matrix_1.csv test_output/matrix_data_output_3.out differ: byte 47, line 2
+[PASS] blackbox_test_suite::matrix_data_output_3: (0.04s)
+[RUN ] blackbox_test_suite::matrix_data_output_4
+RUN: ulimit -t 10; ulimit -f 2000;bin/philo -m < ./tests/rsrc/test_data_4.csv > test_output/matrix_data_output_4.out
+RUN: cmp ./tests/rsrc/test_data_4_matrix_0.csv test_output/matrix_data_output_4.out
+./tests/rsrc/test_data_4_matrix_0.csv test_output/matrix_data_output_4.out differ: byte 7, line 1
+RUN: cmp ./tests/rsrc/test_data_4_matrix_1.csv test_output/matrix_data_output_4.out
+./tests/rsrc/test_data_4_matrix_1.csv test_output/matrix_data_output_4.out differ: byte 7, line 1
+[----] tests/blackbox_tests.c:227: Assertion failed: Distance matrix generated dosen't match any of the possible results.
+[FAIL] blackbox_test_suite::matrix_data_output_4: (0.04s)
+[RUN ] blackbox_test_suite::matrix_data_output_5
+RUN: ulimit -t 10; ulimit -f 2000;bin/philo -m < ./tests/rsrc/test_data_5.csv > test_output/matrix_data_output_5.out
+RUN: cmp ./tests/rsrc/test_data_5_matrix_0.csv test_output/matrix_data_output_5.out
+./tests/rsrc/test_data_5_matrix_0.csv test_output/matrix_data_output_5.out differ: byte 6, line 1
+RUN: cmp ./tests/rsrc/test_data_5_matrix_1.csv test_output/matrix_data_output_5.out
+./tests/rsrc/test_data_5_matrix_1.csv test_output/matrix_data_output_5.out differ: byte 6, line 1
+[----] tests/blackbox_tests.c:227: Assertion failed: Distance matrix generated dosen't match any of the possible results.
+[FAIL] blackbox_test_suite::matrix_data_output_5: (0.44s)
+[RUN ] blackbox_test_suite::newick_data_output_2
+RUN: ulimit -t 10; ulimit -f 2000;bin/philo -n  < ./tests/rsrc/test_data_2.csv > test_output/newick_data_output_2.out
+[----] tests/blackbox_tests.c:344: Assertion failed: The trees were expected to be isomorphic: Root name mismatch
+[FAIL] blackbox_test_suite::newick_data_output_2: (0.02s)
+[RUN ] blackbox_test_suite::newick_data_output_3
+RUN: ulimit -t 10; ulimit -f 2000;bin/philo -n  < ./tests/rsrc/test_data_3.csv > test_output/newick_data_output_3.out
+[PASS] blackbox_test_suite::newick_data_output_3: (0.01s)
+[RUN ] blackbox_test_suite::newick_data_output_4
+RUN: ulimit -t 10; ulimit -f 2000;bin/philo -n  < ./tests/rsrc/test_data_4.csv > test_output/newick_data_output_4.out
+[----] tests/blackbox_tests.c:344: Assertion failed: The trees were expected to be isomorphic: Node degree mismatch
+[FAIL] blackbox_test_suite::newick_data_output_4: (0.01s)
+[RUN ] blackbox_test_suite::newick_data_output_5
+RUN: ulimit -t 10; ulimit -f 2000;bin/philo -n  < ./tests/rsrc/test_data_5.csv > test_output/newick_data_output_5.out
+Segmentation fault (core dumped)
+[----] tests/blackbox_tests.c:308: Assertion failed: Program exited with 0x8b instead of EXIT_SUCCESS
+[FAIL] blackbox_test_suite::newick_data_output_5: (0.47s)
+[RUN ] blackbox_test_suite::newick_data_output_with_outlier_2
+RUN: ulimit -t 10; ulimit -f 2000;bin/philo -n -o B < ./tests/rsrc/test_data_2.csv > test_output/newick_data_output_with_outlier_2.out
+[PASS] blackbox_test_suite::newick_data_output_with_outlier_2: (0.06s)
+[RUN ] blackbox_test_suite::newick_data_output_with_outlier_3
+RUN: ulimit -t 10; ulimit -f 2000;bin/philo -n -o K < ./tests/rsrc/test_data_3.csv > test_output/newick_data_output_with_outlier_3.out
+[PASS] blackbox_test_suite::newick_data_output_with_outlier_3: (0.02s)
+[RUN ] blackbox_test_suite::newick_data_output_with_outlier_4
+RUN: ulimit -t 10; ulimit -f 2000;bin/philo -n -o LA < ./tests/rsrc/test_data_4.csv > test_output/newick_data_output_with_outlier_4.out
+[PASS] blackbox_test_suite::newick_data_output_with_outlier_4: (0.01s)
+[RUN ] blackbox_test_suite::newick_data_output_with_outlier_5
+RUN: ulimit -t 10; ulimit -f 2000;bin/philo -n -o NFIWN < ./tests/rsrc/test_data_5.csv > test_output/newick_data_output_with_outlier_5.out
+Segmentation fault (core dumped)
+[----] tests/blackbox_tests.c:308: Assertion failed: Program exited with 0x8b instead of EXIT_SUCCESS
+[FAIL] blackbox_test_suite::newick_data_output_with_outlier_5: (0.44s)
+[====] Running 8 tests from build_taxonomy_suite:
+[RUN ] build_taxonomy_suite::isomorphic_tree_test_1
+[PASS] build_taxonomy_suite::isomorphic_tree_test_1: (0.00s)
+[RUN ] build_taxonomy_suite::isomorphic_tree_test_2
+[PASS] build_taxonomy_suite::isomorphic_tree_test_2: (0.00s)
+[RUN ] build_taxonomy_suite::isomorphic_tree_test_3
+[PASS] build_taxonomy_suite::isomorphic_tree_test_3: (0.00s)
+[RUN ] build_taxonomy_suite::isomorphic_tree_test_4
+[----] tests/build_taxonomy_tests.c:113: Assertion failed: The trees were expected to be isomorphic: Distance to parent node mismatch
+[FAIL] build_taxonomy_suite::isomorphic_tree_test_4: (0.00s)
+[RUN ] build_taxonomy_suite::isomorphic_tree_test_5
+[----] tests/build_taxonomy_tests.c:113: Assertion failed: The trees were expected to be isomorphic: Distance to parent node mismatch
+[FAIL] build_taxonomy_suite::isomorphic_tree_test_5: (0.18s)
+[RUN ] build_taxonomy_suite::non_null_output_stream_test
+[PASS] build_taxonomy_suite::non_null_output_stream_test: (0.01s)
+[RUN ] build_taxonomy_suite::null_output_stream_test
+[----] tests/build_taxonomy_tests.c:29: Unexpected signal caught below this line!
+[FAIL] build_taxonomy_suite::null_output_stream_test: CRASH!
+[RUN ] build_taxonomy_suite::one_node_input_crash_test
+[PASS] build_taxonomy_suite::one_node_input_crash_test: (0.00s)
+[====] Running 5 tests from distance_matrix_suite:
+[RUN ] distance_matrix_suite::basic_test_1
+Reinitializing...
+[PASS] distance_matrix_suite::basic_test_1: (0.03s)
+[RUN ] distance_matrix_suite::basic_test_2
+Reinitializing...
+[PASS] distance_matrix_suite::basic_test_2: (0.02s)
+[RUN ] distance_matrix_suite::basic_test_3
+Reinitializing...
+Reinitializing...
+[PASS] distance_matrix_suite::basic_test_3: (0.02s)
+Failed COMP for i = 0, j = 5: ref - 61.000000, dist - 0.000000 
+[RUN ] distance_matrix_suite::basic_test_4
+Reinitializing...
+Reinitializing...
+[PASS] distance_matrix_suite::basic_test_4: (0.02s)
+Failed COMP for i = 0, j = 11: ref - 13.900000, dist - 0.000000 
+[RUN ] distance_matrix_suite::basic_test_5
+Reinitializing...
+Reinitializing...
+[PASS] distance_matrix_suite::basic_test_5: (0.83s)
+Failed COMP for i = 188, j = 197: ref - 42.500000, dist - 0.000000 
+[====] Running 6 tests from emit_newick_suite:
+[RUN ] emit_newick_suite::basic_test_1
+[----] tests/emit_newick_format_tests.c:53: Assertion failed: Tree comparison failed (Root name mismatch)
+[FAIL] emit_newick_suite::basic_test_1: (0.01s)
+[RUN ] emit_newick_suite::basic_test_1_with_outlier_B
+[PASS] emit_newick_suite::basic_test_1_with_outlier_B: (0.01s)
+[RUN ] emit_newick_suite::basic_test_2
+[PASS] emit_newick_suite::basic_test_2: (0.01s)
+[RUN ] emit_newick_suite::basic_test_2_with_outlier_K
+[PASS] emit_newick_suite::basic_test_2_with_outlier_K: (0.01s)
+[RUN ] emit_newick_suite::basic_test_4
+[----] tests/emit_newick_format_tests.c:98: Unexpected signal caught below this line!
+[FAIL] emit_newick_suite::basic_test_4: CRASH!
+[RUN ] emit_newick_suite::basic_test_4_with_outlier_NFIWN
+[----] tests/emit_newick_format_tests.c:108: Unexpected signal caught below this line!
+[FAIL] emit_newick_suite::basic_test_4_with_outlier_NFIWN: CRASH!
+[====] Running 16 tests from read_distance_data_suite:
+[RUN ] read_distance_data_suite::basic_test_data_4
+[PASS] read_distance_data_suite::basic_test_data_4: (0.00s)
+[RUN ] read_distance_data_suite::basic_test_wikipedia
+[PASS] read_distance_data_suite::basic_test_wikipedia: (0.00s)
+[RUN ] read_distance_data_suite::different_names_test
+[----] tests/philo_utils.h:15: Assertion failed: Invalid return for different_names_test. Got: 0 | Expected: -1
+[FAIL] read_distance_data_suite::different_names_test: (0.01s)
+[RUN ] read_distance_data_suite::extra_lines_test
+[PASS] read_distance_data_suite::extra_lines_test: (0.00s)
+[RUN ] read_distance_data_suite::input_field_too_long_test
+[PASS] read_distance_data_suite::input_field_too_long_test: (0.00s)
+[RUN ] read_distance_data_suite::invalid_decimals_test
+[----] tests/philo_utils.h:15: Assertion failed: Invalid return for invalid_decimals_test. Got: 0 | Expected: -1
+[FAIL] read_distance_data_suite::invalid_decimals_test: (0.00s)
+[RUN ] read_distance_data_suite::max_input_test
+[PASS] read_distance_data_suite::max_input_test: (0.00s)
+[RUN ] read_distance_data_suite::max_size_matrix_test
+[PASS] read_distance_data_suite::max_size_matrix_test: (0.00s)
+[RUN ] read_distance_data_suite::missing_node_names_test
+[FAIL] read_distance_data_suite::missing_node_names_test: Timed out. (223.02s)
+[RUN ] read_distance_data_suite::non_symmetric_matrix_test
+[----] tests/philo_utils.h:15: Assertion failed: Invalid return for non_symmetric_matrix_test. Got: 0 | Expected: -1
+[FAIL] read_distance_data_suite::non_symmetric_matrix_test: (0.02s)
+[RUN ] read_distance_data_suite::non_zero_diagonal_test
+[PASS] read_distance_data_suite::non_zero_diagonal_test: (0.02s)
+[RUN ] read_distance_data_suite::null_test
+[PASS] read_distance_data_suite::null_test: (0.00s)
+[RUN ] read_distance_data_suite::single_decimal_test
+[----] tests/philo_utils.h:15: Assertion failed: Invalid return for single_decimal_test. Got: 0 | Expected: -1
+[FAIL] read_distance_data_suite::single_decimal_test: (0.01s)
+[RUN ] read_distance_data_suite::too_few_rows_test
+[----] tests/philo_utils.h:15: Assertion failed: Invalid return for too_few_rows_test. Got: 0 | Expected: -1
+[FAIL] read_distance_data_suite::too_few_rows_test: (0.00s)
+[RUN ] read_distance_data_suite::too_many_leading_zeroes_test
+[----] tests/philo_utils.h:15: Assertion failed: Invalid return for too_many_leading_zeroes_test. Got: 0 | Expected: -1
+[FAIL] read_distance_data_suite::too_many_leading_zeroes_test: (0.01s)
+[RUN ] read_distance_data_suite::too_many_rows_test
+[----] tests/philo_utils.h:15: Assertion failed: Invalid return for too_many_rows_test. Got: 0 | Expected: -1
+[FAIL] read_distance_data_suite::too_many_rows_test: (0.00s)
+[====] Running 7 tests from validargs_suite:
+[RUN ] validargs_suite::both_m_and_n_test
+[PASS] validargs_suite::both_m_and_n_test: (0.00s)
+[RUN ] validargs_suite::invalid_h_test
+[PASS] validargs_suite::invalid_h_test: (0.00s)
+[RUN ] validargs_suite::no_outlier_test
+[PASS] validargs_suite::no_outlier_test: (0.00s)
+[RUN ] validargs_suite::non_option_arg_test
+[PASS] validargs_suite::non_option_arg_test: (0.00s)
+[RUN ] validargs_suite::o_before_n_test
+[PASS] validargs_suite::o_before_n_test: (0.00s)
+[RUN ] validargs_suite::options_unset_test
+[PASS] validargs_suite::options_unset_test: (0.00s)
+[RUN ] validargs_suite::random_args_test
+[PASS] validargs_suite::random_args_test: (0.00s)
+[----] Writing xml report in `crit.xml`.
+[====] Synthesis: Tested: 67 | Passing: 47 | Failing: 20 | Crashing: 3 

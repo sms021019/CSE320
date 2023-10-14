@@ -1,0 +1,71 @@
+Graded Commit:e57119fac0931f15bdc8c586fb8c1981a3cf1b7a
+
+TEST NAME, POINTS,OUT OF
+basecode_suite/help_system_test,1,1,
+basecode_suite/philo_basic_test,1,1,
+basecode_suite/validargs_error_test,1,1,
+basecode_suite/validargs_help_test,1,1,
+basecode_suite/validargs_matrix_test,1,1,
+basecode_suite/validargs_newick_test,1,1,
+basecode_suite/validargs_no_flags_test,1,1,
+blackbox_test_suite/edge_data_output_1,1,1,
+blackbox_test_suite/edge_data_output_2,1,1,
+blackbox_test_suite/edge_data_output_3,1,1,
+blackbox_test_suite/edge_data_output_4,1,1,
+blackbox_test_suite/edge_data_output_5,1,1,
+blackbox_test_suite/matrix_data_output_1,1,1,
+blackbox_test_suite/matrix_data_output_2,1,1,
+blackbox_test_suite/matrix_data_output_3,1,1,
+blackbox_test_suite/matrix_data_output_4,0,1,1 assertion(s) failed.: tests/blackbox_tests.c:227: Distance matrix generated dosen't match any of the possible results.
+blackbox_test_suite/matrix_data_output_5,0,1,1 assertion(s) failed.: tests/blackbox_tests.c:227: Distance matrix generated dosen't match any of the possible results.
+blackbox_test_suite/newick_data_output_2,0,1,1 assertion(s) failed.: tests/blackbox_tests.c:344: The trees were expected to be isomorphic: Root name mismatch
+blackbox_test_suite/newick_data_output_3,1,1,
+blackbox_test_suite/newick_data_output_4,0,1,1 assertion(s) failed.: tests/blackbox_tests.c:344: The trees were expected to be isomorphic: Node degree mismatch
+blackbox_test_suite/newick_data_output_5,0,1,1 assertion(s) failed.: tests/blackbox_tests.c:308: Program exited with 0x8b instead of EXIT_SUCCESS
+blackbox_test_suite/newick_data_output_with_outlier_2,1,1,
+blackbox_test_suite/newick_data_output_with_outlier_3,1,1,
+blackbox_test_suite/newick_data_output_with_outlier_4,1,1,
+blackbox_test_suite/newick_data_output_with_outlier_5,0,1,1 assertion(s) failed.: tests/blackbox_tests.c:308: Program exited with 0x8b instead of EXIT_SUCCESS
+build_taxonomy_suite/isomorphic_tree_test_1,1,1,
+build_taxonomy_suite/isomorphic_tree_test_2,1,1,
+build_taxonomy_suite/isomorphic_tree_test_3,1,1,
+build_taxonomy_suite/isomorphic_tree_test_4,0,1,1 assertion(s) failed.: tests/build_taxonomy_tests.c:113: The trees were expected to be isomorphic: Distance to parent node mismatch
+build_taxonomy_suite/isomorphic_tree_test_5,0,1,1 assertion(s) failed.: tests/build_taxonomy_tests.c:113: The trees were expected to be isomorphic: Distance to parent node mismatch
+build_taxonomy_suite/non_null_output_stream_test,1,1,
+build_taxonomy_suite/null_output_stream_test,0,1,The test crashed.: None
+build_taxonomy_suite/one_node_input_crash_test,1,1,
+distance_matrix_suite/basic_test_1,1,1,
+distance_matrix_suite/basic_test_2,1,1,
+distance_matrix_suite/basic_test_3,1,1,
+distance_matrix_suite/basic_test_4,1,1,
+distance_matrix_suite/basic_test_5,1,1,
+emit_newick_suite/basic_test_1,0,1,1 assertion(s) failed.: tests/emit_newick_format_tests.c:53: Tree comparison failed (Root name mismatch)
+emit_newick_suite/basic_test_1_with_outlier_B,1,1,
+emit_newick_suite/basic_test_2,1,1,
+emit_newick_suite/basic_test_2_with_outlier_K,1,1,
+emit_newick_suite/basic_test_4,0,1,The test crashed.: None
+emit_newick_suite/basic_test_4_with_outlier_NFIWN,0,1,The test crashed.: None
+read_distance_data_suite/basic_test_data_4,1,1,
+read_distance_data_suite/basic_test_wikipedia,1,1,
+read_distance_data_suite/different_names_test,0,1,1 assertion(s) failed.: tests/philo_utils.h:15: Invalid return for different_names_test. Got: 0 | Expected: -1
+read_distance_data_suite/extra_lines_test,1,1,
+read_distance_data_suite/input_field_too_long_test,1,1,
+read_distance_data_suite/invalid_decimals_test,0,1,1 assertion(s) failed.: tests/philo_utils.h:15: Invalid return for invalid_decimals_test. Got: 0 | Expected: -1
+read_distance_data_suite/max_input_test,1,1,
+read_distance_data_suite/max_size_matrix_test,1,1,
+read_distance_data_suite/missing_node_names_test,0,1,The test timed out.: None
+read_distance_data_suite/non_symmetric_matrix_test,0,1,1 assertion(s) failed.: tests/philo_utils.h:15: Invalid return for non_symmetric_matrix_test. Got: 0 | Expected: -1
+read_distance_data_suite/non_zero_diagonal_test,1,1,
+read_distance_data_suite/null_test,1,1,
+read_distance_data_suite/single_decimal_test,0,1,1 assertion(s) failed.: tests/philo_utils.h:15: Invalid return for single_decimal_test. Got: 0 | Expected: -1
+read_distance_data_suite/too_few_rows_test,0,1,1 assertion(s) failed.: tests/philo_utils.h:15: Invalid return for too_few_rows_test. Got: 0 | Expected: -1
+read_distance_data_suite/too_many_leading_zeroes_test,0,1,1 assertion(s) failed.: tests/philo_utils.h:15: Invalid return for too_many_leading_zeroes_test. Got: 0 | Expected: -1
+read_distance_data_suite/too_many_rows_test,0,1,1 assertion(s) failed.: tests/philo_utils.h:15: Invalid return for too_many_rows_test. Got: 0 | Expected: -1
+validargs_suite/both_m_and_n_test,1,1,
+validargs_suite/invalid_h_test,1,1,
+validargs_suite/no_outlier_test,1,1,
+validargs_suite/non_option_arg_test,1,1,
+validargs_suite/o_before_n_test,1,1,
+validargs_suite/options_unset_test,1,1,
+validargs_suite/random_args_test,1,1,
+total,47,67
