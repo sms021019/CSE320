@@ -274,7 +274,7 @@ run (>=1 args) -- Start a process
 stop (1 args) -- Stop a running process
 cont (1 args) -- Continue a stopped process
 release (1 args) -- Stop tracing a process, allowing it to continue normally
-wait (1 args) -- Wait for a process to terminate
+wait (1-2 args) -- Wait for a process to enter a specified state
 kill (1 args) -- Forcibly terminate a process
 peek (2-3 args) -- Read from the address space of a traced process
 poke (3 args) -- Write to the address space of a traced process
@@ -667,9 +667,16 @@ user to explicitly delete processes in order to avoid unbounded accumulation of
 information about dead processes.
 
   - The `wait` command causes `deet` to wait until a specified target process
-	has entered the `PSTATE_DEAD` state.  No prompt will be issued until this has
-    occurred.  If the process does not enter the `PSTATE_DEAD` state, this command
-	will not terminate unless the user types CTRL-C to interrupt `deet`.
+	has either entered a specified state or has terminated.  The first argument
+    is the `deet` ID of the process to wait for.  The (optional) second argument
+    is a string specifying the desired state.  Possibilities for this argument are:
+	`running`, `stopping`, `stopped`, `continuing`, `killed`, and `dead`.
+	The default if this argument is not given is `dead`.
+    Once this command has been entered, no further prompt will be issued until the
+	target process has either entered the specified state or terminated.
+    If the process never enters the specified state or terminates, then the only
+	way for the `wait` command to terminate is if `deet` receives `SIGINT`;
+	for example, as a result of the user typing CTRL-C.
 
   - The user may enter the `show`" command to obtain information about the
     processes currently being managed by `deet`.  Simply entering `show` without any
@@ -837,8 +844,8 @@ signalled, as invoking it with a a negative value or zero could cause the
 termination of `deet` itself.
 
 `Deet` should use the `sigsuspend()` system call in order to suspend
-execution while waiting for a process to transition to the `PSTATE_DEAD`
-state.
+execution while waiting for a process to transition to the specified state
+or to terminate.
 
 `Deet` should use the `getline()` function to read user input (from the standard
 input stream).  It may use `fprintf()`, `fputc()`, and the like to emit output
