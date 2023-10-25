@@ -14,11 +14,8 @@
 /* sf_footer */
 /* sf_block */
 
-#define PUT(payload_size, block_size, alloc, prvAlloc) \
-    ((((size_t)(payload_size) & 0xFFFFFFFF) << 32) | \
-     (((size_t)(block_size) & 0xFFFFFF) << 4) | \
-     (((size_t)(alloc) & 0x1) << 3) | \
-     ((size_t)(prvAlloc) & 0x1))
+int total_payload;
+int total_allocated_block;
 
 #define GET_PAYLOAD_SIZE(header) ((header >> 32) & 0xFFFFFFFF)
 #define GET_BLOCK_SIZE(header)   (header & 0x00000000FFFFFFF0)
@@ -52,8 +49,6 @@ void init_sentinels() {
 }
 
 int is_wilderness(sf_block *bp){
-    // size_t prev_block_size = GET_BLOCK_SIZE(bp->prev_footer);
-    // sf_block *prev_bp = (void *)bp - prev_block_size;
     size_t size = GET_BLOCK_SIZE(bp->header);
     sf_footer *block_footer = (void *)bp + size;
     return block_footer == sf_mem_end() - 16;
@@ -64,8 +59,6 @@ void add_new_free_block(sf_block *new_free_block, int index){
     void *sentinel = &sf_free_list_heads[index];
     void *bp = ((sf_block *)sentinel)->body.links.next;
 
-    // if(is_wilderness(new_free_block))
-    //     index = 9;
 
     if(LIST_EMPTY(index)){
         sf_free_list_heads[index].body.links.next = new_free_block;
@@ -130,12 +123,22 @@ void change_size_of_block(sf_header *block_header, size_t asize){
     *block_header = new_header;
 }
 
+void change_size_of_payload(sf_header *block_header, size_t payload_size){
+    size_t block_size = GET_BLOCK_SIZE(*block_header);
+    size_t alloc = GET_ALLOC_BIT(*block_header);
+    size_t prev_alloc = GET_PREV_ALLOC(*block_header);
+    sf_header new_header = block_size;
+    new_header |= payload_size << 32;
+    new_header |= alloc ? 0x8 : 0;
+    new_header |= prev_alloc ? 0x4 : 0;
+    *block_header = new_header;
+}
+
 
 
 void *split(void *target_block, size_t asize, size_t payload_size){
     sf_header *target_block_header_addr = &((sf_block *)target_block)->header;
     sf_header target_block_header = *target_block_header_addr;
-    if(GET_ALLOC_BIT(target_block_header) == 1) return NULL;                   /* If target block is not freed return NULL */
     size_t target_block_size = GET_BLOCK_SIZE(target_block_header);
     size_t new_block_size = target_block_size - asize;
 
@@ -158,7 +161,7 @@ void *split(void *target_block, size_t asize, size_t payload_size){
 
     add_new_free_block(new_block, check_wilderness ? 9 : find_min_index(new_block->header));
 
-    ((sf_block *)target_block)->header |= payload_size << 32;
+    change_size_of_payload(&(((sf_block *)target_block)->header), payload_size);
     return ((sf_block *)target_block)->body.payload;
 }
 
@@ -175,21 +178,16 @@ static void *coalesce(void *bp){
         return bp;
 
     else if(prev_alloc && !next_alloc) {
-        // sf_show_heap();
-        // remove_free_block_from_list(bp);
-        // sf_show_heap();
         remove_free_block_from_list(next_block);
-        sf_show_heap();
+        // sf_show_heap();
 
         size += GET_BLOCK_SIZE(next_block->header);
         change_size_of_block(&(((sf_block *)bp)->header), size);
         sf_footer *new_footer = bp + size;
         *new_footer = (sf_footer)(((sf_block *)bp)->header);
 
-        // add_new_free_block(bp, find_min_index(((sf_block *)bp)->header));
     }
     else if(!prev_alloc && next_alloc) {
-        // remove_free_block_from_list(bp);
         remove_free_block_from_list(prev_block);
 
         size += GET_BLOCK_SIZE(prev_block->header);
@@ -233,7 +231,6 @@ static void *find_fit(size_t asize, size_t payload_size){
 
         sf_block *first_heap_block = sf_mem_start() + 32;   /* Start from footer of prologue */
         first_heap_block->prev_footer = (sf_footer)(prologue->header);   /* Footer is identical to its header */
-        // first_heap_block->header |= (uint64_t)payload_size << 32;    /* Page(4096) - unused row(8) - prologue(32) - epilogue(8) */
         size_t first_block_size = PAGE_SZ - 8 - 32 - 8;
         first_heap_block->header |= first_block_size;
         first_heap_block->header |= 0x4;
@@ -241,8 +238,8 @@ static void *find_fit(size_t asize, size_t payload_size){
         sf_block *epilogue = sf_mem_end() - 16;
         epilogue->prev_footer = (sf_footer)(first_heap_block->header);
         epilogue->header |= 0x8;
-        printf("%s\n", "After first heap initializing");
-        sf_show_heap();         // Show heap right after the intitialization
+        // printf("%s\n", "After first heap initializing");
+        // sf_show_heap();         // Show heap right after the intitialization
 
         int index_of_first_heap_block = NUM_FREE_LISTS-1;                   // Put wilderness block in free list
         sf_free_list_heads[index_of_first_heap_block].body.links.next = first_heap_block;
@@ -257,19 +254,18 @@ static void *find_fit(size_t asize, size_t payload_size){
                 first_heap_block->header |= 0x8;            /* Set Alloc */
                 first_heap_block->header |= payload_size << 32;     /* Set payload_size */
                 bp = (void *)(first_heap_block->body.payload);
-                printf("%s\n", "Allocated block with the internal fragment");
-                sf_show_heap();
+                // printf("%s\n", "Allocated block with the internal fragment");
+                // sf_show_heap();
             }
             else{
-                // sf_show_heap();
                 bp = split(first_heap_block, asize, payload_size);        /* split a block and put new splited free block into list and return pp of block */
-                printf("%s\n", "Allocated block after spliting");
-                sf_show_heap();
+                // printf("%s\n", "Allocated block after spliting");
+                // sf_show_heap();
             }
 
         }else{
             // required more allocation
-            printf("%s\n", "The required block size is greater than current wilderness block\nAllocate new page");
+            // printf("%s\n", "The required block size is greater than current wilderness block\nAllocate new page");
             goto ALLOCATE_NEW_PAGE;
 
         }
@@ -280,7 +276,6 @@ static void *find_fit(size_t asize, size_t payload_size){
     else                            /* Heap exists */
     {
         SEARCH_TROUGH_FREE_LIST:
-        // sf_show_heap();
         for(int i = index_of_min_size; i < NUM_FREE_LISTS; i++){
             void *sentinel = &sf_free_list_heads[i];
             void *cursor = ((sf_block *)sentinel)->body.links.next;
@@ -293,21 +288,18 @@ static void *find_fit(size_t asize, size_t payload_size){
                 if(cursor_size >= asize){
                     if((cursor_size - asize) >= 32){
                         bp = split(cursor, asize, payload_size);
-                        printf("%s\n", "Allocated block after spliting");
-                        sf_show_heap();
+                        // printf("%s\n", "Allocated block after spliting");
                         return bp;
                     }else{
                         remove_free_block_from_list((sf_block *)cursor);
                         ((sf_block *)cursor)->header |= payload_size << 32;
                         ((sf_block *)cursor)->header |= 0x8;
-                        printf("%s\n", "Allocated block with the internal fragment");
-                        sf_show_heap();
+                        // printf("%s\n", "Allocated block with the internal fragment");
                         return ((sf_block *)cursor)->body.payload;
                     }
                 }else{
                     goto ALLOCATE_NEW_PAGE;
                 }
-                // return ((sf_block *)cursor)->body.payload;
             }
         }
 
@@ -326,8 +318,6 @@ static void *find_fit(size_t asize, size_t payload_size){
         prev_epilogue->header |= PAGE_SZ;
         prev_epilogue->header |= prev_alloc;
 
-        // add_new_free_block(prev_epilogue, find_min_index(prev_epilogue->header));
-
         sf_block *new_epilogue = sf_mem_end() - 16;
         new_epilogue->prev_footer = (sf_footer)prev_epilogue->header;
         new_epilogue->header |= 0x8;
@@ -344,36 +334,40 @@ static void *find_fit(size_t asize, size_t payload_size){
     return NULL; /* No fit */
 }
 
-
-void *sf_malloc(size_t size) {
-
-    size_t required_block_size;       /* Adjusted block size */
-    sf_block *bp;
-
-    /* Ignore spurious requests */
-    if(size == 0)   return NULL;
-
-    /* Adjust block size to include overhead and alignment reqs */
+size_t find_required_block_size(size_t size){
+    size_t required_block_size;
     if((size + 16) <= sizeof(sf_block))
         required_block_size = sizeof(sf_block);
     else{
         size_t temp = (16 - (size % 16)) == 16 ? 0 : (16 - (size % 16));
         required_block_size = size + 16 + temp;
-
     }
+    return required_block_size;
+}
 
-    printf("Adjusted block size: %ld\n", required_block_size);
+
+void *sf_malloc(size_t size) {
+
+    size_t required_block_size = find_required_block_size(size);       /* Adjusted block size */
+    sf_block *bp;
+
+    /* Ignore spurious requests */
+    if(size == 0)   return NULL;
+
+    // printf("Adjusted block size: %ld\n", required_block_size);
+
+    total_payload += (int)size;
+    total_allocated_block += (int)required_block_size;
 
     /* Search the free list for a fit */
     if((bp = find_fit(required_block_size, size)) != NULL) {
-        // place(bp, asize);
         return bp;
     }
 
     /* No fit found. Get more memory and place the block */
     if((bp = sf_mem_grow()) == NULL)
         return NULL;
-    // place(bp, asize);
+
     return bp;
 
 }
@@ -381,17 +375,17 @@ void *sf_malloc(size_t size) {
 
 void sf_free(void *pp) {
 
-    printf("%s\n", "heap before free");
-    sf_show_heap();
+    // printf("%s\n", "heap before free");
+    // sf_show_heap();
     sf_block *block_pointer = pp - 16;
     sf_header *block_header_addr = &(block_pointer->header);
+    size_t payload_size = GET_PAYLOAD_SIZE(*block_header_addr);
     size_t block_size = GET_BLOCK_SIZE(*block_header_addr);
     size_t prev_alloc = GET_PREV_ALLOC(*block_header_addr);
     sf_footer *block_footer_addr = (void *)block_pointer + block_size;
 
     size_t prev_block_size = GET_BLOCK_SIZE(block_pointer->prev_footer);
     sf_block *prev_block = block_pointer - prev_block_size;
-
 
 
     if(pp == NULL)  abort();
@@ -408,26 +402,25 @@ void sf_free(void *pp) {
 
     *block_footer_addr = (sf_footer)(block_pointer->header);
 
-    // add_new_free_block(block_pointer, find_min_index(block_pointer->header));
-
-    // sf_show_heap();
-
     void *new_bp = coalesce(block_pointer);
     int wflag = is_wilderness(new_bp);
 
-    // sf_show_heap();
+    total_payload -= (int)payload_size;
+    total_allocated_block -= (int)block_size;
+
     add_new_free_block(new_bp, wflag ? NUM_FREE_LISTS-1 : find_min_index(((sf_block *)new_bp)->header));
-    printf("%s\n", "heap after free");
-    sf_show_heap();
+    // printf("%s\n", "heap after free");
 
 }
 
+
 void *sf_realloc(void *pp, size_t rsize) {
-    printf("%s\n", "heap before realloc");
-    sf_show_heap();
+    // printf("%s\n", "heap before realloc");
+    // sf_show_heap();
     sf_block *block_pointer = pp - 16;
     sf_header *block_header_addr = &(block_pointer->header);
     size_t block_size = GET_BLOCK_SIZE(*block_header_addr);
+    size_t payload_size = GET_PAYLOAD_SIZE(*block_header_addr);
     sf_footer *block_footer_addr = (void *)block_pointer + block_size;
 
     size_t prev_block_size = GET_BLOCK_SIZE(block_pointer->prev_footer);
@@ -446,15 +439,49 @@ void *sf_realloc(void *pp, size_t rsize) {
         return NULL;
     }
 
-    abort();
+    size_t realloc_block_size = find_required_block_size(rsize);
+    if(realloc_block_size == block_size)
+        return pp;
+    else if(realloc_block_size > block_size){
+        void *new_block_payload = sf_malloc(rsize);
+        memcpy(new_block_payload,pp,block_size);
+        sf_free(pp);
+
+        total_payload += ((int)rsize - (int)payload_size);
+        total_allocated_block += ((int)realloc_block_size - (int)block_size);
+
+        return new_block_payload;
+    }
+    else {
+        size_t sub = block_size - realloc_block_size;
+        if(sub < sizeof(sf_block)){
+            change_size_of_payload(&(block_pointer->header), rsize);
+            *block_footer_addr = block_pointer->header;
+
+            total_payload -= (payload_size - rsize);
+            return pp;
+        }else{
+            pp = split(block_pointer, realloc_block_size, rsize);
+            void *temp_addr = (void *)((size_t)block_pointer + realloc_block_size);
+            coalesce(temp_addr);
+
+            total_allocated_block -= (int)sub;
+            total_payload -= ((int)payload_size - (int)rsize);
+            return pp;
+        }
+    }
 }
 
+
 double sf_fragmentation() {
-    // To be implemented.
-    abort();
+    if(sf_mem_start() == sf_mem_end())
+        return 0.0;
+    return (double)total_payload/total_allocated_block;
 }
 
 double sf_utilization() {
-    // To be implemented.
-    abort();
+    if(sf_mem_start() == sf_mem_end())
+        return 0.0;
+    int heap_size = sf_mem_end() - sf_mem_start();
+    return (double)total_payload/heap_size;
 }
