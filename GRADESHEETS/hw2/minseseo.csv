@@ -1,0 +1,34 @@
+Graded Commit:11c3fc629a56a14768c95d284265caa6ad262e68
+
+TEST NAME, POINTS,OUT OF
+basecode_suite/blackbox_help,1,1,
+basecode_suite/blackbox_report,1,1,
+basecode_suite/collate,1,1,
+basecode_suite/read_file,1,1,
+basecode_suite/stats,1,1,
+basecode_suite/tabsep,1,1,
+blackbox_suite/blackbox_collate,1,1,
+blackbox_suite/blackbox_collate_short,1,1,
+blackbox_suite/blackbox_comps,1,1,
+blackbox_suite/blackbox_freqs,1,1,
+blackbox_suite/blackbox_histos,1,1,
+blackbox_suite/blackbox_indivs,1,1,
+blackbox_suite/blackbox_long_options,1,1,
+blackbox_suite/blackbox_nonames_collate,1,1,
+blackbox_suite/blackbox_nonames_collate_short,1,1,
+blackbox_suite/blackbox_o_option,0,1,1 assertion(s) failed.: tests/test_common.c:107: The program terminated with an unexpected signal (11).
+blackbox_suite/blackbox_o_option_short,0,1,1 assertion(s) failed.: tests/test_common.c:107: The program terminated with an unexpected signal (11).
+blackbox_suite/blackbox_quants,1,1,
+blackbox_suite/blackbox_report,1,1,
+blackbox_suite/blackbox_report_all,1,1,
+blackbox_suite/blackbox_report_all_short,1,1,
+blackbox_suite/blackbox_report_short,1,1,
+blackbox_suite/blackbox_report_sortby,1,1,
+blackbox_suite/blackbox_report_sortby_short,1,1,
+blackbox_suite/blackbox_stats,1,1,
+blackbox_suite/blackbox_summaries,1,1,
+blackbox_suite/blackbox_tabsep,1,1,
+tokenbuf_suite/tokenbuf_test_0chars,1,1,
+valgrind_suite/valgrind_memory_leak,1,1,
+valgrind_suite/valgrind_use_after_free,1,1,
+total,28,30

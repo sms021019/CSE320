@@ -1,0 +1,232 @@
+[----] Criterion v2.3.3
+[====] Running 6 tests from basecode_suite:
+[RUN ] basecode_suite::blackbox_help
+-----
+setup(rm -fr test_output/blackbox_help; mkdir -p test_output/blackbox_help)
+-----
+setup(rm -fr test_output/blackbox_help; mkdir -p test_output/blackbox_help)
+run(ulimit -t 10; ulimit -f 2000; bin/grades -h < /dev/null > test_output/blackbox_help/blackbox_help.out 2> test_output/blackbox_help/blackbox_help.err)
+[PASS] basecode_suite::blackbox_help: (0.22s)
+[RUN ] basecode_suite::blackbox_report
+-----
+setup(rm -fr test_output/blackbox_report; mkdir -p test_output/blackbox_report)
+-----
+setup(rm -fr test_output/blackbox_report; mkdir -p test_output/blackbox_report)
+run(ulimit -t 10; ulimit -f 2000; bin/grades -r tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_report/blackbox_report.out 2> test_output/blackbox_report/blackbox_report.err)
+[PASS] basecode_suite::blackbox_report: (0.13s)
+[RUN ] basecode_suite::collate
+-----
+setup(rm -fr test_output/collate; mkdir -p test_output/collate)
+[ tests/rsrc/collate.in [ tests/rsrc/cse307c.dat ] [ tests/rsrc/cse307b.dat ] [ tests/rsrc/cse307a.dat ] ]
+run(diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/collate/collate.out tests/rsrc/collate.out)
+[PASS] basecode_suite::collate: (0.04s)
+[RUN ] basecode_suite::read_file
+-----
+setup(rm -fr test_output/read_file; mkdir -p test_output/read_file)
+[ tests/rsrc/read_file.in [ tests/rsrc/cse307c.dat ] [ tests/rsrc/cse307b.dat ] [ tests/rsrc/cse307a.dat ] ]
+[PASS] basecode_suite::read_file: (0.02s)
+[RUN ] basecode_suite::stats
+-----
+setup(rm -fr test_output/stats; mkdir -p test_output/stats)
+[ tests/rsrc/stats.in [ tests/rsrc/cse307c.dat ] [ tests/rsrc/cse307b.dat ] [ tests/rsrc/cse307a.dat ] ]
+[PASS] basecode_suite::stats: (0.03s)
+[RUN ] basecode_suite::tabsep
+-----
+setup(rm -fr test_output/tabsep; mkdir -p test_output/tabsep)
+[ tests/rsrc/tabsep.in [ tests/rsrc/cse307c.dat ] [ tests/rsrc/cse307b.dat ] [ tests/rsrc/cse307a.dat ] ]
+run(diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/tabsep/tabsep.out tests/rsrc/tabsep.out)
+[PASS] basecode_suite::tabsep: (0.05s)
+[====] Running 21 tests from blackbox_suite:
+[RUN ] blackbox_suite::blackbox_collate
+-----
+setup(rm -fr test_output/blackbox_collate; mkdir -p test_output/blackbox_collate)
+-----
+setup(rm -fr test_output/blackbox_collate; mkdir -p test_output/blackbox_collate)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --collate tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_collate/blackbox_collate.out 2> test_output/blackbox_collate/blackbox_collate.err)
+run(grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' test_output/blackbox_collate/blackbox_collate.out > test_output/blackbox_collate/blackbox_collate.out.flt; grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' tests/rsrc/blackbox_collate.out > test_output/blackbox_collate/blackbox_collate.out.ref; diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/blackbox_collate/blackbox_collate.out.flt test_output/blackbox_collate/blackbox_collate.out.ref)
+[PASS] blackbox_suite::blackbox_collate: (0.16s)
+[RUN ] blackbox_suite::blackbox_collate_short
+-----
+setup(rm -fr test_output/blackbox_collate_short; mkdir -p test_output/blackbox_collate_short)
+-----
+setup(rm -fr test_output/blackbox_collate_short; mkdir -p test_output/blackbox_collate_short)
+run(ulimit -t 10; ulimit -f 2000; bin/grades -c tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_collate_short/blackbox_collate_short.out 2> test_output/blackbox_collate_short/blackbox_collate_short.err)
+run(grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' test_output/blackbox_collate_short/blackbox_collate_short.out > test_output/blackbox_collate_short/blackbox_collate_short.out.flt; grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' tests/rsrc/blackbox_collate_short.out > test_output/blackbox_collate_short/blackbox_collate_short.out.ref; diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/blackbox_collate_short/blackbox_collate_short.out.flt test_output/blackbox_collate_short/blackbox_collate_short.out.ref)
+[PASS] blackbox_suite::blackbox_collate_short: (0.16s)
+[RUN ] blackbox_suite::blackbox_comps
+-----
+setup(rm -fr test_output/blackbox_comps; mkdir -p test_output/blackbox_comps)
+-----
+setup(rm -fr test_output/blackbox_comps; mkdir -p test_output/blackbox_comps)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --report --comps tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_comps/blackbox_comps.out 2> test_output/blackbox_comps/blackbox_comps.err)
+run(grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' test_output/blackbox_comps/blackbox_comps.out > test_output/blackbox_comps/blackbox_comps.out.flt; grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' tests/rsrc/blackbox_comps.out > test_output/blackbox_comps/blackbox_comps.out.ref; diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/blackbox_comps/blackbox_comps.out.flt test_output/blackbox_comps/blackbox_comps.out.ref)
+[PASS] blackbox_suite::blackbox_comps: (0.17s)
+[RUN ] blackbox_suite::blackbox_freqs
+-----
+setup(rm -fr test_output/blackbox_freqs; mkdir -p test_output/blackbox_freqs)
+-----
+setup(rm -fr test_output/blackbox_freqs; mkdir -p test_output/blackbox_freqs)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --report --freqs tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_freqs/blackbox_freqs.out 2> test_output/blackbox_freqs/blackbox_freqs.err)
+run(grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' test_output/blackbox_freqs/blackbox_freqs.out > test_output/blackbox_freqs/blackbox_freqs.out.flt; grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' tests/rsrc/blackbox_freqs.out > test_output/blackbox_freqs/blackbox_freqs.out.ref; diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/blackbox_freqs/blackbox_freqs.out.flt test_output/blackbox_freqs/blackbox_freqs.out.ref)
+[PASS] blackbox_suite::blackbox_freqs: (0.18s)
+[RUN ] blackbox_suite::blackbox_histos
+-----
+setup(rm -fr test_output/blackbox_histos; mkdir -p test_output/blackbox_histos)
+-----
+setup(rm -fr test_output/blackbox_histos; mkdir -p test_output/blackbox_histos)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --report --histos tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_histos/blackbox_histos.out 2> test_output/blackbox_histos/blackbox_histos.err)
+run(grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' test_output/blackbox_histos/blackbox_histos.out > test_output/blackbox_histos/blackbox_histos.out.flt; grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' tests/rsrc/blackbox_histos.out > test_output/blackbox_histos/blackbox_histos.out.ref; diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/blackbox_histos/blackbox_histos.out.flt test_output/blackbox_histos/blackbox_histos.out.ref)
+[PASS] blackbox_suite::blackbox_histos: (0.22s)
+[RUN ] blackbox_suite::blackbox_indivs
+-----
+setup(rm -fr test_output/blackbox_indivs; mkdir -p test_output/blackbox_indivs)
+-----
+setup(rm -fr test_output/blackbox_indivs; mkdir -p test_output/blackbox_indivs)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --report --indivs tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_indivs/blackbox_indivs.out 2> test_output/blackbox_indivs/blackbox_indivs.err)
+run(grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' test_output/blackbox_indivs/blackbox_indivs.out > test_output/blackbox_indivs/blackbox_indivs.out.flt; grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' tests/rsrc/blackbox_indivs.out > test_output/blackbox_indivs/blackbox_indivs.out.ref; diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/blackbox_indivs/blackbox_indivs.out.flt test_output/blackbox_indivs/blackbox_indivs.out.ref)
+[PASS] blackbox_suite::blackbox_indivs: (0.20s)
+[RUN ] blackbox_suite::blackbox_long_options
+-----
+setup(rm -fr test_output/blackbox_long_options; mkdir -p test_output/blackbox_long_options)
+-----
+setup(rm -fr test_output/blackbox_long_options; mkdir -p test_output/blackbox_long_options)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --s tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_long_options/blackbox_long_options.out 2> test_output/blackbox_long_options/blackbox_long_options.err)
+[PASS] blackbox_suite::blackbox_long_options: (0.15s)
+[RUN ] blackbox_suite::blackbox_nonames_collate
+-----
+setup(rm -fr test_output/blackbox_nonames_collate; mkdir -p test_output/blackbox_nonames_collate)
+-----
+setup(rm -fr test_output/blackbox_nonames_collate; mkdir -p test_output/blackbox_nonames_collate)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --collate --nonames tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_nonames_collate/blackbox_nonames_collate.out 2> test_output/blackbox_nonames_collate/blackbox_nonames_collate.err)
+run(grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' test_output/blackbox_nonames_collate/blackbox_nonames_collate.out > test_output/blackbox_nonames_collate/blackbox_nonames_collate.out.flt; grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' tests/rsrc/blackbox_nonames_collate.out > test_output/blackbox_nonames_collate/blackbox_nonames_collate.out.ref; diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/blackbox_nonames_collate/blackbox_nonames_collate.out.flt test_output/blackbox_nonames_collate/blackbox_nonames_collate.out.ref)
+[PASS] blackbox_suite::blackbox_nonames_collate: (0.19s)
+[RUN ] blackbox_suite::blackbox_nonames_collate_short
+-----
+setup(rm -fr test_output/blackbox_nonames_collate_short; mkdir -p test_output/blackbox_nonames_collate_short)
+-----
+setup(rm -fr test_output/blackbox_nonames_collate_short; mkdir -p test_output/blackbox_nonames_collate_short)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --collate -n tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_nonames_collate_short/blackbox_nonames_collate_short.out 2> test_output/blackbox_nonames_collate_short/blackbox_nonames_collate_short.err)
+run(grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' test_output/blackbox_nonames_collate_short/blackbox_nonames_collate_short.out > test_output/blackbox_nonames_collate_short/blackbox_nonames_collate_short.out.flt; grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' tests/rsrc/blackbox_nonames_collate_short.out > test_output/blackbox_nonames_collate_short/blackbox_nonames_collate_short.out.ref; diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/blackbox_nonames_collate_short/blackbox_nonames_collate_short.out.flt test_output/blackbox_nonames_collate_short/blackbox_nonames_collate_short.out.ref)
+[PASS] blackbox_suite::blackbox_nonames_collate_short: (0.17s)
+[RUN ] blackbox_suite::blackbox_o_option
+-----
+setup(rm -fr test_output/blackbox_o_option; mkdir -p test_output/blackbox_o_option)
+-----
+setup(rm -fr test_output/blackbox_o_option; mkdir -p test_output/blackbox_o_option)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --report --comps --output test_output/tmp tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_o_option/blackbox_o_option.out 2> test_output/blackbox_o_option/blackbox_o_option.err)
+[----] tests/test_common.c:107: Assertion failed: The program terminated with an unexpected signal (11).
+[FAIL] blackbox_suite::blackbox_o_option: (0.50s)
+[RUN ] blackbox_suite::blackbox_o_option_short
+-----
+setup(rm -fr test_output/blackbox_o_option_short; mkdir -p test_output/blackbox_o_option_short)
+-----
+setup(rm -fr test_output/blackbox_o_option_short; mkdir -p test_output/blackbox_o_option_short)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --report --comps -o test_output/tmp tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_o_option_short/blackbox_o_option_short.out 2> test_output/blackbox_o_option_short/blackbox_o_option_short.err)
+[----] tests/test_common.c:107: Assertion failed: The program terminated with an unexpected signal (11).
+[FAIL] blackbox_suite::blackbox_o_option_short: (0.43s)
+[RUN ] blackbox_suite::blackbox_quants
+-----
+setup(rm -fr test_output/blackbox_quants; mkdir -p test_output/blackbox_quants)
+-----
+setup(rm -fr test_output/blackbox_quants; mkdir -p test_output/blackbox_quants)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --report --quants tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_quants/blackbox_quants.out 2> test_output/blackbox_quants/blackbox_quants.err)
+run(grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' test_output/blackbox_quants/blackbox_quants.out > test_output/blackbox_quants/blackbox_quants.out.flt; grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' tests/rsrc/blackbox_quants.out > test_output/blackbox_quants/blackbox_quants.out.ref; diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/blackbox_quants/blackbox_quants.out.flt test_output/blackbox_quants/blackbox_quants.out.ref)
+[PASS] blackbox_suite::blackbox_quants: (0.26s)
+[RUN ] blackbox_suite::blackbox_report
+-----
+setup(rm -fr test_output/blackbox_report; mkdir -p test_output/blackbox_report)
+-----
+setup(rm -fr test_output/blackbox_report; mkdir -p test_output/blackbox_report)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --report tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_report/blackbox_report.out 2> test_output/blackbox_report/blackbox_report.err)
+run(grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' test_output/blackbox_report/blackbox_report.out > test_output/blackbox_report/blackbox_report.out.flt; grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' tests/rsrc/blackbox_report.out > test_output/blackbox_report/blackbox_report.out.ref; diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/blackbox_report/blackbox_report.out.flt test_output/blackbox_report/blackbox_report.out.ref)
+[PASS] blackbox_suite::blackbox_report: (0.21s)
+[RUN ] blackbox_suite::blackbox_report_all
+-----
+setup(rm -fr test_output/blackbox_report_all; mkdir -p test_output/blackbox_report_all)
+-----
+setup(rm -fr test_output/blackbox_report_all; mkdir -p test_output/blackbox_report_all)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --report --all tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_report_all/blackbox_report_all.out 2> test_output/blackbox_report_all/blackbox_report_all.err)
+run(grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' test_output/blackbox_report_all/blackbox_report_all.out > test_output/blackbox_report_all/blackbox_report_all.out.flt; grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' tests/rsrc/blackbox_report_all.out > test_output/blackbox_report_all/blackbox_report_all.out.ref; diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/blackbox_report_all/blackbox_report_all.out.flt test_output/blackbox_report_all/blackbox_report_all.out.ref)
+[PASS] blackbox_suite::blackbox_report_all: (0.31s)
+[RUN ] blackbox_suite::blackbox_report_all_short
+-----
+setup(rm -fr test_output/blackbox_report_all_short; mkdir -p test_output/blackbox_report_all_short)
+-----
+setup(rm -fr test_output/blackbox_report_all_short; mkdir -p test_output/blackbox_report_all_short)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --report -a tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_report_all_short/blackbox_report_all_short.out 2> test_output/blackbox_report_all_short/blackbox_report_all_short.err)
+run(grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' test_output/blackbox_report_all_short/blackbox_report_all_short.out > test_output/blackbox_report_all_short/blackbox_report_all_short.out.flt; grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' tests/rsrc/blackbox_report_all_short.out > test_output/blackbox_report_all_short/blackbox_report_all_short.out.ref; diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/blackbox_report_all_short/blackbox_report_all_short.out.flt test_output/blackbox_report_all_short/blackbox_report_all_short.out.ref)
+[PASS] blackbox_suite::blackbox_report_all_short: (0.26s)
+[RUN ] blackbox_suite::blackbox_report_short
+-----
+setup(rm -fr test_output/blackbox_report_short; mkdir -p test_output/blackbox_report_short)
+-----
+setup(rm -fr test_output/blackbox_report_short; mkdir -p test_output/blackbox_report_short)
+run(ulimit -t 10; ulimit -f 2000; bin/grades -r tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_report_short/blackbox_report_short.out 2> test_output/blackbox_report_short/blackbox_report_short.err)
+run(grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' test_output/blackbox_report_short/blackbox_report_short.out > test_output/blackbox_report_short/blackbox_report_short.out.flt; grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' tests/rsrc/blackbox_report_short.out > test_output/blackbox_report_short/blackbox_report_short.out.ref; diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/blackbox_report_short/blackbox_report_short.out.flt test_output/blackbox_report_short/blackbox_report_short.out.ref)
+[PASS] blackbox_suite::blackbox_report_short: (0.14s)
+[RUN ] blackbox_suite::blackbox_report_sortby
+-----
+setup(rm -fr test_output/blackbox_report_sortby; mkdir -p test_output/blackbox_report_sortby)
+-----
+setup(rm -fr test_output/blackbox_report_sortby; mkdir -p test_output/blackbox_report_sortby)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --report --comps --sortby name tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_report_sortby/blackbox_report_sortby.out 2> test_output/blackbox_report_sortby/blackbox_report_sortby.err)
+run(grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' test_output/blackbox_report_sortby/blackbox_report_sortby.out > test_output/blackbox_report_sortby/blackbox_report_sortby.out.flt; grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' tests/rsrc/blackbox_report_sortby.out > test_output/blackbox_report_sortby/blackbox_report_sortby.out.ref; diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/blackbox_report_sortby/blackbox_report_sortby.out.flt test_output/blackbox_report_sortby/blackbox_report_sortby.out.ref)
+[PASS] blackbox_suite::blackbox_report_sortby: (0.17s)
+[RUN ] blackbox_suite::blackbox_report_sortby_short
+-----
+setup(rm -fr test_output/blackbox_report_sortby_short; mkdir -p test_output/blackbox_report_sortby_short)
+-----
+setup(rm -fr test_output/blackbox_report_sortby_short; mkdir -p test_output/blackbox_report_sortby_short)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --report --comps -k name tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_report_sortby_short/blackbox_report_sortby_short.out 2> test_output/blackbox_report_sortby_short/blackbox_report_sortby_short.err)
+run(grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' test_output/blackbox_report_sortby_short/blackbox_report_sortby_short.out > test_output/blackbox_report_sortby_short/blackbox_report_sortby_short.out.flt; grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' tests/rsrc/blackbox_report_sortby_short.out > test_output/blackbox_report_sortby_short/blackbox_report_sortby_short.out.ref; diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/blackbox_report_sortby_short/blackbox_report_sortby_short.out.flt test_output/blackbox_report_sortby_short/blackbox_report_sortby_short.out.ref)
+[PASS] blackbox_suite::blackbox_report_sortby_short: (0.23s)
+[RUN ] blackbox_suite::blackbox_stats
+-----
+setup(rm -fr test_output/blackbox_stats; mkdir -p test_output/blackbox_stats)
+-----
+setup(rm -fr test_output/blackbox_stats; mkdir -p test_output/blackbox_stats)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --report --stats tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_stats/blackbox_stats.out 2> test_output/blackbox_stats/blackbox_stats.err)
+run(grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' test_output/blackbox_stats/blackbox_stats.out > test_output/blackbox_stats/blackbox_stats.out.flt; grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' tests/rsrc/blackbox_stats.out > test_output/blackbox_stats/blackbox_stats.out.ref; diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/blackbox_stats/blackbox_stats.out.flt test_output/blackbox_stats/blackbox_stats.out.ref)
+[PASS] blackbox_suite::blackbox_stats: (0.17s)
+[RUN ] blackbox_suite::blackbox_summaries
+-----
+setup(rm -fr test_output/blackbox_summaries; mkdir -p test_output/blackbox_summaries)
+-----
+setup(rm -fr test_output/blackbox_summaries; mkdir -p test_output/blackbox_summaries)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --report --summaries tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_summaries/blackbox_summaries.out 2> test_output/blackbox_summaries/blackbox_summaries.err)
+grep: test_output/blackbox_summaries/blackbox_summaries.alt: No such file or directory
+grep: tests/rsrc/blackbox_summaries.alt: No such file or directory
+[PASS] blackbox_suite::blackbox_summaries: (0.15s)
+[RUN ] blackbox_suite::blackbox_tabsep
+-----
+setup(rm -fr test_output/blackbox_tabsep; mkdir -p test_output/blackbox_tabsep)
+-----
+setup(rm -fr test_output/blackbox_tabsep; mkdir -p test_output/blackbox_tabsep)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --report --tabsep tests/rsrc/cse307.dat < /dev/null > test_output/blackbox_tabsep/blackbox_tabsep.out 2> test_output/blackbox_tabsep/blackbox_tabsep.err)
+run(grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' test_output/blackbox_tabsep/blackbox_tabsep.out > test_output/blackbox_tabsep/blackbox_tabsep.out.flt; grep -v 'RUN\ DATE\|0\ warnings\ were\ issued.' tests/rsrc/blackbox_tabsep.out > test_output/blackbox_tabsep/blackbox_tabsep.out.ref; diff --ignore-tab-expansion --ignore-trailing-space --ignore-space-change --ignore-blank-lines test_output/blackbox_tabsep/blackbox_tabsep.out.flt test_output/blackbox_tabsep/blackbox_tabsep.out.ref)
+[PASS] blackbox_suite::blackbox_tabsep: (0.17s)
+[====] Running 1 test from tokenbuf_suite:
+[RUN ] tokenbuf_suite::tokenbuf_test_0chars
+-----
+setup(rm -fr test_output/tokenbuf_test_0chars; mkdir -p test_output/tokenbuf_test_0chars)
+-----
+setup(rm -fr test_output/tokenbuf_test_0chars; mkdir -p test_output/tokenbuf_test_0chars)
+run(ulimit -t 10; ulimit -f 2000; bin/grades --report tests/rsrc/cse307_extra_large_token_0chars.dat < /dev/null > test_output/tokenbuf_test_0chars/tokenbuf_test_0chars.out 2> test_output/tokenbuf_test_0chars/tokenbuf_test_0chars.err)
+[PASS] tokenbuf_suite::tokenbuf_test_0chars: (0.11s)
+[====] Running 2 tests from valgrind_suite:
+[RUN ] valgrind_suite::valgrind_memory_leak
+-----
+setup(rm -fr test_output/valgrind_memory_leak; mkdir -p test_output/valgrind_memory_leak)
+-----
+setup(rm -fr test_output/valgrind_memory_leak; mkdir -p test_output/valgrind_memory_leak)
+run(ulimit -t 10; ulimit -f 2000;valgrind --leak-check=full --error-exitcode=37 bin/grades --report --freqs tests/rsrc/cse307.dat < /dev/null > test_output/valgrind_memory_leak/valgrind_memory_leak.out 2> test_output/valgrind_memory_leak/valgrind_memory_leak.err)
+[PASS] valgrind_suite::valgrind_memory_leak: (1.07s)
+[RUN ] valgrind_suite::valgrind_use_after_free
+-----
+setup(rm -fr test_output/valgrind_use_after_free; mkdir -p test_output/valgrind_use_after_free)
+-----
+setup(rm -fr test_output/valgrind_use_after_free; mkdir -p test_output/valgrind_use_after_free)
+run(ulimit -t 10; ulimit -f 2000;valgrind --undef-value-errors=yes --error-exitcode=37 bin/grades --report --freqs tests/rsrc/cse307.dat < /dev/null > test_output/valgrind_use_after_free/valgrind_use_after_free.out 2> test_output/valgrind_use_after_free/valgrind_use_after_free.err)
+[PASS] valgrind_suite::valgrind_use_after_free: (1.13s)
+[----] Writing xml report in `crit.xml`.
+[====] Synthesis: Tested: 30 | Passing: 28 | Failing: 2 | Crashing: 0 
