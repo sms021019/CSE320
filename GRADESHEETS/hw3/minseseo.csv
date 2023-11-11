@@ -1,0 +1,43 @@
+Graded Commit:9df9490b156960bafbf3cbdb2513d4244f99390e
+
+TEST NAME, POINTS,OUT OF
+sf_memsuite_grading/free_block_too_small,1,1,
+sf_memsuite_grading/free_null,0,1,0 assertion(s) failed.: None
+sf_memsuite_grading/free_prev_alloc,0,1,1 assertion(s) failed.: tests/grading_tests_p2.c:200: SIGABRT should have been received
+sf_memsuite_grading/free_unallocated,1,1,
+sf_memsuite_grading/initialization,1,1,
+sf_memsuite_grading/malloc_free_coalesce_both,0,1,1 assertion(s) failed.: tests/__grading_helpers.c:75: Prev allocated bit is not correctly set for 0x563a6f9f98e8. Should be: 0
+sf_memsuite_grading/malloc_free_coalesce_lower,0,1,1 assertion(s) failed.: tests/__grading_helpers.c:75: Prev allocated bit is not correctly set for 0x55ae7c41f8e8. Should be: 0
+sf_memsuite_grading/malloc_free_coalesce_upper,0,1,1 assertion(s) failed.: tests/__grading_helpers.c:75: Prev allocated bit is not correctly set for 0x565033b1c8e8. Should be: 0
+sf_memsuite_grading/malloc_free_first_block,0,1,1 assertion(s) failed.: tests/__grading_helpers.c:75: Prev allocated bit is not correctly set for 0x56425ff57608. Should be: 0
+sf_memsuite_grading/malloc_free_last_block,1,1,
+sf_memsuite_grading/malloc_free_lifo,0,1,1 assertion(s) failed.: tests/grading_tests_p2.c:46: malloc/free does not follow LIFO discipline
+sf_memsuite_grading/malloc_free_no_coalesce,0,1,1 assertion(s) failed.: tests/__grading_helpers.c:75: Prev allocated bit is not correctly set for 0x55a87afa0748. Should be: 0
+sf_memsuite_grading/malloc_to_exhaustion,1,1,
+sf_memsuite_grading/malloc_with_splinter,1,1,
+sf_memsuite_grading/realloc_larger,1,1,
+sf_memsuite_grading/realloc_same,1,1,
+sf_memsuite_grading/realloc_size_0,1,1,
+sf_memsuite_grading/realloc_smaller,1,1,
+sf_memsuite_grading/realloc_splinter,1,1,
+sf_memsuite_grading/single_malloc_1,1,1,
+sf_memsuite_grading/single_malloc_16,1,1,
+sf_memsuite_grading/single_malloc_32,1,1,
+sf_memsuite_grading/single_malloc_exactly_one_page_needed,1,1,
+sf_memsuite_grading/single_malloc_max,1,1,
+sf_memsuite_grading/single_malloc_more_than_one_page_needed,1,1,
+sf_memsuite_grading/single_malloc_three_pages_needed,1,1,
+sf_memsuite_grading/stress_test,0,1,The test crashed.: None
+sf_memsuite_stats/internal_fragmentation,0,1,The test crashed.: None
+sf_memsuite_stats/peak_utilization,0,1,"1 assertion(s) failed.: tests/grading_tests_p2.c:356: peak utilization_1 did not match (exp=0.197754, found=0.124512)"
+sf_memsuite_stats/realloc_internal_fragmentation,0,1,The test crashed.: None
+sfmm_basecode_suite/free_coalesce,1,1,
+sfmm_basecode_suite/free_no_coalesce,1,1,
+sfmm_basecode_suite/freelist,1,1,
+sfmm_basecode_suite/malloc_an_int,1,1,
+sfmm_basecode_suite/malloc_four_pages,1,1,
+sfmm_basecode_suite/malloc_too_large,1,1,
+sfmm_basecode_suite/realloc_larger_block,1,1,
+sfmm_basecode_suite/realloc_smaller_block_free_block,1,1,
+sfmm_basecode_suite/realloc_smaller_block_splinter,1,1,
+total,27,39
