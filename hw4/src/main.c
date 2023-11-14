@@ -10,7 +10,18 @@
 #include "helper.h"
 #include "debug.h"
 
+
 int main(int argc, char *argv[]) {
+    int prompt_enabled = 1;
+
+    // Parse command-line arguments
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "-p") == 0) {
+            prompt_enabled = 0; // Disable prompt if -p flag is found
+            break;
+        }
+    }
+
     log_startup();
     char *input_line = NULL;
     size_t len = 0;
@@ -41,7 +52,9 @@ int main(int argc, char *argv[]) {
 
     while (1) {
         log_prompt();
-        printf("deet> ");
+        if(prompt_enabled){
+            printf("deet> ");
+        }
         fflush(stdout);
         arg_count = 0;
 
@@ -49,8 +62,7 @@ int main(int argc, char *argv[]) {
 
         if (nread == -1) {
             free(input_line);
-            perror("getline");
-            exit(EXIT_FAILURE);
+            exit(EXIT_SUCCESS);
         }
         log_input(input_line);
 

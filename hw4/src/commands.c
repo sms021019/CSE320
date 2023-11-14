@@ -158,33 +158,28 @@ void sigchld_handler(int signo) {
         managed_process *child_process = find_managed_process(pid);
 
         if (WIFEXITED(status)) {
-            // printf("Child %d exited, status=%d\n", child_process->pid, WEXITSTATUS(status));
             log_state_change(child_process->pid, child_process->state, PSTATE_DEAD, WEXITSTATUS(status));
             child_process->state = PSTATE_DEAD;
             child_process->exit_status = WEXITSTATUS(status);
             print_managed_process(child_process);
         }
         if (WIFSIGNALED(status)) {
-            // printf("Child %d killed by signal %d\n", child_process->pid, WTERMSIG(status));
             log_state_change(child_process->pid, child_process->state, PSTATE_KILLED, WTERMSIG(status));
             child_process->state = PSTATE_KILLED;
             print_managed_process(child_process);
         }
         if (WIFSTOPPED(status)) {
-            // printf("Child %d stopped by signal %d\n", child_process->pid, WSTOPSIG(status));
             log_state_change(child_process->pid, child_process->state, PSTATE_STOPPED, WIFSTOPPED(status));
             child_process->state = PSTATE_STOPPED;
             print_managed_process(child_process);
         }
         if (WIFCONTINUED(status)) {
-            // printf("Child %d continued\n", child_process->pid);
             log_state_change(child_process->pid, child_process->state, PSTATE_CONTINUING, WIFCONTINUED(status));
             child_process->state = PSTATE_CONTINUING;
             print_managed_process(child_process);
         }
     }
 }
-
 
 void sigint_handler(int sig) {
     log_signal(2);
@@ -240,18 +235,18 @@ int run_command(const char* program, char* const argv[]) {
 }
 
 managed_process* input_validation_and_get_process(char* const argv[]){
-    debug("1");
+    // debug("1");
     if(is_empty()) return NULL;
-    debug("2");
+    // debug("2");
     if(argv[0] == NULL) return NULL;
-    debug("3");
+    // debug("3");
     if(argv[1] != NULL) return NULL;
-    debug("4");
+    // debug("4");
     int deetId;
-    debug("5");
+    // debug("5");
     if((deetId = charToInt(*argv[0])) == -1) return NULL;
-    debug("6");
-    debug("%d\n", deetId);
+    // debug("6");
+    // debug("%d\n", deetId);
     return process_list[deetId];
 }
 
@@ -274,7 +269,7 @@ int kill_command(char* const argv[]) {
 int cont_command(char* const argv[]){
     managed_process *child_process = input_validation_and_get_process(argv);
     if(child_process == NULL) return -1;
-    debug("hi");
+    // debug("hi");
     if(child_process->state == PSTATE_STOPPED){
         // Check if the process is being traced
         if(child_process->tflag == TRACED){
