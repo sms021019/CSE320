@@ -25,6 +25,8 @@ typedef struct {
 
 managed_process *process_list[10];
 
+int quit_command();
+
 managed_process *find_managed_process(pid_t pid){
     for(int i = 0; i < 10; i++){
         if(process_list[i]->pid == pid){
@@ -136,24 +138,12 @@ int is_empty(){
     return 1;
 }
 
-handler_t *Signal(int signum, handler_t *handler){
-    struct sigaction action, old_action;
-
-    action.sa_handler = handler;
-    sigemptyset(&action.sa_mask); // Block sigs of type being handled
-    action.sa_flags = SA_RESTART; // Restart syscalls if possible
-
-    if(sigaction(signum, &action, &old_action) < 0)
-        perror("Signal error");
-    return (old_action.sa_handler);
-}
-
 void sigchld_handler(int signo) {
     log_signal(signo);
     int status;
     pid_t pid;
 
-    while((pid = waitpid(-1, &status, WNOHANG | WUNTRACED | WCONTINUED)) > 0) {
+    while((pid = waitpid(0, &status, WNOHANG | WUNTRACED | WCONTINUED)) > 0) {
         // debug("pid: %d\n", pid);
         managed_process *child_process = find_managed_process(pid);
 
@@ -164,8 +154,9 @@ void sigchld_handler(int signo) {
             print_managed_process(child_process);
         }
         if (WIFSIGNALED(status)) {
-            log_state_change(child_process->pid, child_process->state, PSTATE_KILLED, WTERMSIG(status));
-            child_process->state = PSTATE_KILLED;
+            log_state_change(child_process->pid, child_process->state, PSTATE_DEAD, WTERMSIG(status));
+            child_process->state = PSTATE_DEAD;
+            child_process->exit_status = WTERMSIG(status);
             print_managed_process(child_process);
         }
         if (WIFSTOPPED(status)) {
@@ -183,6 +174,7 @@ void sigchld_handler(int signo) {
 
 void sigint_handler(int sig) {
     log_signal(2);
+    quit_command();
     log_shutdown();
     exit(EXIT_SUCCESS);
 }
@@ -261,24 +253,52 @@ int stop_command(char* const argv[]) {
 int kill_command(char* const argv[]) {
     managed_process *child_process = input_validation_and_get_process(argv);
     if(child_process == NULL) return -1;
-
+    log_state_change(child_process->pid, child_process->state, PSTATE_KILLED, 0);
+    print_managed_process(child_process);
     if(kill(child_process->pid, SIGKILL) == -1) return -1;
     return 0;
 }
 
 int cont_command(char* const argv[]){
     managed_process *child_process = input_validation_and_get_process(argv);
-    if(child_process == NULL) return -1;
+    if(child_process == NULL) {
+        debug("1");
+        return -1;
+    }
     // debug("hi");
     if(child_process->state == PSTATE_STOPPED){
         // Check if the process is being traced
         if(child_process->tflag == TRACED){
             ptrace(PTRACE_CONT, child_process->pid, NULL, NULL);
+            log_state_change(child_process->pid, child_process->state, PSTATE_RUNNING, 0);
+            child_process->state = PSTATE_RUNNING;
+            print_managed_process(child_process);
         }else{
             kill(child_process->pid, SIGCONT);
         }
-    }else{
+    }
+    else{
+        debug("process state: %s",pstate_to_string(child_process->state));
         return -1;
+    }
+    return 0;
+}
+
+int quit_command() {
+    for (int i = 0; i < 10; i++) {
+        if (process_list[i] != NULL && process_list[i]->state != PSTATE_DEAD) {
+            log_state_change(process_list[i]->pid, process_list[i]->state, PSTATE_KILLED, 0);
+            print_managed_process(process_list[i]);
+            if (kill(process_list[i]->pid, SIGKILL) == -1) {
+                return -1;
+            }
+
+            // while(1){
+            //     sleep(1);
+            //     if(process_list[i]->state == PSTATE_DEAD)
+            //         break;
+            // }
+        }
     }
     return 0;
 }

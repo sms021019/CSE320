@@ -89,6 +89,7 @@ int main(int argc, char *argv[]) {
         if (strcmp(command, "help") == 0) {
             print_help();
         } else if (strcmp(command, "quit") == 0) {
+            quit_command();
             free(input_line);
             log_shutdown();
             break;
@@ -121,7 +122,7 @@ int main(int argc, char *argv[]) {
         } else {
             PRINTERR:
             log_error(input_line);
-            printf("?\n");
+            fprintf(stderr, "?\n");
         }
 
         free(input_line);
