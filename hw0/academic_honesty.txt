@@ -1,7 +1,3 @@
-Joseph Seo
-114232506
-:blush:
-Stark - 01
 
 ACADEMIC HONESTY STATEMENT
 ================================================================================
@@ -39,4 +35,3 @@ my submission. Such permission is best requested and obtained by E-mail to
 cse320@cs.stonybrook.edu
 ================================================================================
 Signed:
-Sat Aug 26 07:06:26 PM UTC 2023 - Joseph Seo
