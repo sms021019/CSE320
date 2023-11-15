@@ -187,6 +187,11 @@ int run_command(const char* program, char* const argv[]) {
     if(argv[0] == NULL)
         return -1;
 
+    sigset_t mask, oldmask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGCHLD);
+    sigprocmask(SIG_BLOCK, &mask, &oldmask);
+
     pid_t pid;
     pid = fork();
 
@@ -226,6 +231,8 @@ int run_command(const char* program, char* const argv[]) {
         log_state_change(pid, child_process->state, PSTATE_RUNNING, 0);
         child_process->state = PSTATE_RUNNING;
         print_managed_process(child_process);
+
+        sigprocmask(SIG_SETMASK, &oldmask, NULL);
         return 0;
     }
 }
