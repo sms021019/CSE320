@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/ptrace.h>
+#include <string.h>
 
 #include "debug.h"
 #include "deet.h"
@@ -24,6 +25,8 @@ typedef struct {
 } managed_process;
 
 managed_process *process_list[10];
+
+volatile sig_atomic_t child_status_changed = 0;
 
 int quit_command();
 
@@ -165,11 +168,12 @@ void sigchld_handler(int signo) {
             print_managed_process(child_process);
         }
         if (WIFCONTINUED(status)) {
-            log_state_change(child_process->pid, child_process->state, PSTATE_CONTINUING, WIFCONTINUED(status));
-            child_process->state = PSTATE_CONTINUING;
+            log_state_change(child_process->pid, child_process->state, PSTATE_RUNNING, WIFCONTINUED(status));
+            child_process->state = PSTATE_RUNNING;
             print_managed_process(child_process);
         }
     }
+    child_status_changed = 1;
 }
 
 void sigint_handler(int sig) {
@@ -227,24 +231,24 @@ int run_command(const char* program, char* const argv[]) {
 }
 
 managed_process* input_validation_and_get_process(char* const argv[]){
-    // debug("1");
     if(is_empty()) return NULL;
-    // debug("2");
     if(argv[0] == NULL) return NULL;
-    // debug("3");
     if(argv[1] != NULL) return NULL;
-    // debug("4");
     int deetId;
-    // debug("5");
     if((deetId = charToInt(*argv[0])) == -1) return NULL;
-    // debug("6");
-    // debug("%d\n", deetId);
     return process_list[deetId];
 }
 
 int stop_command(char* const argv[]) {
     managed_process *child_process = input_validation_and_get_process(argv);
     if(child_process == NULL) return -1;
+    if(child_process->state != PSTATE_RUNNING) return -1;
+
+    if(child_process->tflag == UNTRACED){
+        log_state_change(child_process->pid, child_process->state, PSTATE_STOPPING, 0);
+        child_process->state = PSTATE_STOPPING;
+        print_managed_process(child_process);
+    }
 
     if(kill(child_process->pid, SIGSTOP) == -1) return -1;
     return 0;
@@ -253,7 +257,11 @@ int stop_command(char* const argv[]) {
 int kill_command(char* const argv[]) {
     managed_process *child_process = input_validation_and_get_process(argv);
     if(child_process == NULL) return -1;
+    if(child_process->state == PSTATE_NONE ||
+        child_process->state == PSTATE_KILLED ||
+        child_process->state == PSTATE_DEAD)    return -1;
     log_state_change(child_process->pid, child_process->state, PSTATE_KILLED, 0);
+    child_process->state = PSTATE_KILLED;
     print_managed_process(child_process);
     if(kill(child_process->pid, SIGKILL) == -1) return -1;
     return 0;
@@ -262,7 +270,6 @@ int kill_command(char* const argv[]) {
 int cont_command(char* const argv[]){
     managed_process *child_process = input_validation_and_get_process(argv);
     if(child_process == NULL) {
-        debug("1");
         return -1;
     }
     // debug("hi");
@@ -274,6 +281,9 @@ int cont_command(char* const argv[]){
             child_process->state = PSTATE_RUNNING;
             print_managed_process(child_process);
         }else{
+            log_state_change(child_process->pid, child_process->state, PSTATE_CONTINUING, 0);
+            child_process->state = PSTATE_CONTINUING;
+            print_managed_process(child_process);
             kill(child_process->pid, SIGCONT);
         }
     }
@@ -284,21 +294,85 @@ int cont_command(char* const argv[]){
     return 0;
 }
 
+int release_command(char* const argv[]){
+    managed_process *child_process = input_validation_and_get_process(argv);
+    if(child_process == NULL) {
+        return -1;
+    }
+
+    if(child_process->tflag == TRACED && child_process->state != PSTATE_RUNNING){
+        ptrace(PTRACE_DETACH, child_process->pid, NULL, NULL);
+        log_state_change(child_process->pid, child_process->state, PSTATE_RUNNING, 0);
+        child_process->state = PSTATE_RUNNING;
+        child_process->tflag = UNTRACED;
+        print_managed_process(child_process);
+    }else{
+        return -1;
+    }
+    return 0;
+}
+
+managed_process* wait_command_input_validation_and_get_process(char* const argv[]){
+    if(is_empty()) return NULL;
+    if(argv[0] == NULL) return NULL;
+    if(argv[1] != NULL){
+        if(!((strcmp(argv[1], "running") == 0) ||
+            (strcmp(argv[1], "stopping") == 0) ||
+            (strcmp(argv[1], "stopped") == 0) ||
+            (strcmp(argv[1], "continuing") == 0) ||
+            (strcmp(argv[1], "killed") == 0) ||
+            (strcmp(argv[1], "dead") == 0))) {
+            return NULL;
+        }
+    }
+    if(argv[2] != NULL) return NULL;
+    int deetId;
+    if((deetId = charToInt(*argv[0])) == -1) return NULL;
+    return process_list[deetId];
+}
+
+int wait_command(char* const argv[]){
+    char* desired_state = "dead";
+    managed_process* child_process = wait_command_input_validation_and_get_process(argv);
+    if(child_process == NULL)   return -1;
+    if(argv[1] != NULL){
+        desired_state = argv[1];
+    }
+
+    // Block SIGCHLD and save current signal mask
+    sigset_t mask, orig_mask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGCHLD);
+    sigprocmask(SIG_BLOCK, &mask, &orig_mask);
+    while(!(strcmp(pstate_to_string(child_process->state), desired_state) == 0)){
+        sigsuspend(&orig_mask);
+    }
+    child_status_changed = 0;
+    sigprocmask(SIG_SETMASK, &orig_mask, NULL);
+    return 0;
+}
+
 int quit_command() {
     for (int i = 0; i < 10; i++) {
-        if (process_list[i] != NULL && process_list[i]->state != PSTATE_DEAD) {
+        if (process_list[i] != NULL && (process_list[i]->state != PSTATE_DEAD && process_list[i]->state != PSTATE_KILLED)){
             log_state_change(process_list[i]->pid, process_list[i]->state, PSTATE_KILLED, 0);
+            process_list[i]->state = PSTATE_KILLED;
             print_managed_process(process_list[i]);
             if (kill(process_list[i]->pid, SIGKILL) == -1) {
                 return -1;
             }
+        }
+    }
 
-            // while(1){
-            //     sleep(1);
-            //     if(process_list[i]->state == PSTATE_DEAD)
-            //         break;
-            // }
+    for(int i = 0; i < 10; i++){
+        if(process_list[i] != NULL && process_list[i]->state != PSTATE_DEAD){
+            while(1){
+                sleep(1);
+                if(process_list[i]->state == PSTATE_DEAD)   break;
+            }
         }
     }
     return 0;
 }
+
+

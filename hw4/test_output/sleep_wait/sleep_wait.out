@@ -1,8 +1,8 @@
-0	3380	T	stopped		echo hello world
-0	3380	T	running		echo hello world
-1	3389	T	stopped		sleep 1
-1	3389	T	running		sleep 1
-0	3380	T	running		echo hello world
-0	3380	T	dead	0x9	echo hello world
-1	3389	T	running		sleep 1
-1	3389	T	dead	0x9	sleep 1
+0	2190	T	running		echo hello world
+0	2190	T	stopped		echo hello world
+1	2201	T	stopped		sleep 1
+1	2201	T	running		sleep 1
+0	2190	T	running		echo hello world
+0	2190	T	dead	0x0	echo hello world
+1	2201	T	running		sleep 1
+1	2201	T	dead	0x9	sleep 1

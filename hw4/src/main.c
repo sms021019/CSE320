@@ -106,9 +106,11 @@ int main(int argc, char *argv[]) {
             if(cont_command(args) == -1)
                 goto PRINTERR;
         } else if (strcmp(command, "release") == 0) {
-            // Stop tracing a process
+            if(release_command(args) == -1)
+                goto PRINTERR;
         } else if (strcmp(command, "wait") == 0) {
-            // Wait for a process
+            if(wait_command(args) == -1)
+                goto PRINTERR;
         } else if (strcmp(command, "kill") == 0) {
             if(kill_command(args) == -1)
                 goto PRINTERR;
