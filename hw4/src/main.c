@@ -99,7 +99,6 @@ int main(int argc, char *argv[]) {
         } else if (strcmp(command, "run") == 0) {
             if(run_command(program_name, args) == -1)
                 goto PRINTERR;
-            // Start a process
         } else if (strcmp(command, "stop") == 0) {
             if(stop_command(args) == -1)
                 goto PRINTERR;
