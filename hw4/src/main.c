@@ -122,9 +122,11 @@ int main(int argc, char *argv[]) {
             if(kill_command(args) == -1)
                 goto PRINTERR;
         } else if (strcmp(command, "peek") == 0) {
-            // Read from a process
+            if(peek_command(args) == -1)
+                goto PRINTERR;
         } else if (strcmp(command, "poke") == 0) {
-            // Write to a process
+            if(poke_command(args) == -1)
+                goto PRINTERR;
         } else if (strcmp(command, "bt") == 0) {
             // Show a stack trace
         } else {

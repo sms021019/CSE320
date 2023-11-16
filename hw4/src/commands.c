@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <sys/ptrace.h>
 #include <string.h>
+#include <errno.h>
+#include <limits.h>
 
 #include "debug.h"
 #include "deet.h"
@@ -198,7 +200,6 @@ int run_command(const char* program, char* const argv[]) {
     if(pid == -1){
         // Handle fork error
         log_error("fork failed");
-        perror("fork");
         log_shutdown();
         exit(EXIT_FAILURE);
     } else if(pid == 0) {
@@ -208,7 +209,7 @@ int run_command(const char* program, char* const argv[]) {
 
         // Enable tracing
         ptrace(PTRACE_TRACEME, 0, NULL, NULL);
-
+        // debug("h");
         // Execute the programs
         execvp(program, argv);
 
@@ -298,13 +299,13 @@ int cont_command(char* const argv[]){
             print_managed_process(child_process);
             kill(child_process->pid, SIGCONT);
         }
+        sigprocmask(SIG_SETMASK, &oldmask, NULL);
     }
     else{
         debug("process state: %s",pstate_to_string(child_process->state));
         sigprocmask(SIG_SETMASK, &oldmask, NULL);
         return -1;
     }
-    sigprocmask(SIG_SETMASK, &oldmask, NULL);
     return 0;
 }
 
@@ -366,6 +367,99 @@ int wait_command(char* const argv[]){
     return 0;
 }
 
+int peek_command(const char* argv[]){
+    if (argv[0] == NULL || argv[1] == NULL || argv[3] != NULL) {
+        return -1;
+    }
+
+    // Validate deetId
+    int deetId;
+    if((deetId = charToInt(*argv[0])) == -1) return -1;
+
+    // Validate Address (hexadecimal)
+    char *endptr;
+    errno = 0;
+    unsigned long long address = strtoull(argv[1], &endptr, 16);
+    if (errno != 0 || *endptr != '\0' || address == 0) {
+        return -1;
+    }
+
+    // Validate Number of Words (if provided)
+    int num_words = 1; // Default value
+    if (argv[2] != NULL) {
+        errno = 0;
+        long temp_num_words = strtol(argv[2], &endptr, 10);
+        if (errno != 0 || *endptr != '\0' || temp_num_words <= 0) {
+            return -1;
+        }
+        num_words = (int)temp_num_words;
+    }
+
+    if(num_words <= 0){
+        num_words = 1;
+    }
+
+    managed_process* child_process = process_list[(int)deetId];
+    if(child_process == NULL)   return -1;
+    if(child_process->state != PSTATE_STOPPED)  return -1;
+    if(child_process->tflag != TRACED)  return -1;
+
+    for(int i = 0; i < num_words; ++i){
+        errno = 0;
+        unsigned long long data = ptrace(PTRACE_PEEKDATA, child_process->pid, address + i * 8, NULL);
+
+        if(errno != 0){
+            return -1;
+        }
+
+        printf("%016llx\t%016llx\n", address + i * 8, data);
+    }
+    return 0;
+}
+
+int poke_command(const char* argv[]){
+    debug("1");
+    if (argv[0] == NULL || argv[1] == NULL || argv[2] == NULL || argv[3] != NULL) {
+        return -1;
+    }
+    debug("2");
+    // Validate deetId
+    int deetId;
+    if((deetId = charToInt(*argv[0])) == -1) return -1;
+    debug("3");
+
+    // Validate Address (hexadecimal)
+    char *endptr;
+    errno = 0;
+    unsigned long long address = strtoull(argv[1], &endptr, 16);
+    if (errno != 0 || *endptr != '\0' || address == 0) {
+        return -1;
+    }
+    debug("4");
+
+    errno = 0;
+    unsigned long long data = strtoull(argv[2], &endptr, 16);
+    if (errno != 0 || *endptr != '\0' || data == 0) {
+        return -1;
+    }
+    debug("5");
+
+    managed_process* child_process = process_list[deetId];
+    if(child_process == NULL)   return -1;
+    if(child_process->state != PSTATE_STOPPED)  return -1;
+    if(child_process->tflag != TRACED)  return -1;
+
+    debug("6");
+    errno = 0;
+    long ret = ptrace(PTRACE_POKEDATA, child_process->pid, (void*)address, (void*)data);
+    debug("7");
+    if(ret == -1 && errno != 0){
+        return -1;
+    }
+
+    return 0;
+}
+
 int quit_command() {
     for (int i = 0; i < 10; i++) {
         if (process_list[i] != NULL && (process_list[i]->state != PSTATE_DEAD && process_list[i]->state != PSTATE_KILLED)){
@@ -381,7 +475,7 @@ int quit_command() {
     for(int i = 0; i < 10; i++){
         if(process_list[i] != NULL && process_list[i]->state != PSTATE_DEAD){
             while(1){
-                sleep(1);
+                usleep(1);
                 if(process_list[i]->state == PSTATE_DEAD)   break;
             }
         }

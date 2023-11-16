@@ -3,6 +3,8 @@ int stop_command(char* const argv[]);
 int kill_command(char* const argv[]);
 int cont_command(char* const argv[]);
 int wait_command(char* const argv[]);
+int peek_command(char* const argv[]);
+int poke_command(char* const argv[]);
 int quit_command();
 int release_command(char* const argv[]);
 int print_all_managed_processes();
