@@ -279,7 +279,12 @@ int cont_command(char* const argv[]){
     if(child_process == NULL) {
         return -1;
     }
-    // debug("hi");
+
+    sigset_t mask, oldmask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGCHLD);
+    sigprocmask(SIG_BLOCK, &mask, &oldmask);
+
     if(child_process->state == PSTATE_STOPPED){
         // Check if the process is being traced
         if(child_process->tflag == TRACED){
@@ -296,8 +301,10 @@ int cont_command(char* const argv[]){
     }
     else{
         debug("process state: %s",pstate_to_string(child_process->state));
+        sigprocmask(SIG_SETMASK, &oldmask, NULL);
         return -1;
     }
+    sigprocmask(SIG_SETMASK, &oldmask, NULL);
     return 0;
 }
 
