@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <errno.h>
 
 #include "deet.h"
 #include "commands.h"
@@ -52,17 +53,23 @@ int main(int argc, char *argv[]) {
 
     while (1) {
         log_prompt();
-        if(prompt_enabled){
+        if (prompt_enabled) {
             printf("deet> ");
+            fflush(stdout);
         }
-        fflush(stdout);
-        arg_count = 0;
 
+        arg_count = 0;
         nread = getline(&input_line, &len, stdin);
 
         if (nread == -1) {
-            free(input_line);
-            exit(EXIT_SUCCESS);
+            if (errno == EINTR) {
+                // System call was interrupted by SIGCHLD, continue to re-prompt
+                continue;
+            } else {
+                // Some other error or EOF, handle or exit as needed
+                free(input_line);
+                exit(EXIT_SUCCESS);
+            }
         }
         log_input(input_line);
 

@@ -288,10 +288,10 @@ int cont_command(char* const argv[]){
     if(child_process->state == PSTATE_STOPPED){
         // Check if the process is being traced
         if(child_process->tflag == TRACED){
-            ptrace(PTRACE_CONT, child_process->pid, NULL, NULL);
             log_state_change(child_process->pid, child_process->state, PSTATE_RUNNING, 0);
             child_process->state = PSTATE_RUNNING;
             print_managed_process(child_process);
+            ptrace(PTRACE_CONT, child_process->pid, NULL, NULL);
         }else{
             log_state_change(child_process->pid, child_process->state, PSTATE_CONTINUING, 0);
             child_process->state = PSTATE_CONTINUING;
