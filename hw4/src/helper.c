@@ -100,6 +100,6 @@ int charToInt(char c) {
     if (c >= '0' && c <= '9') {
         return c - '0'; // Subtract ASCII value of '0' to get the integer value
     } else {
-        return -1; // Return -1 or some error code if c is not a numeric character
+        return -1;
     }
 }

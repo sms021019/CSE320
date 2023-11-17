@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/ptrace.h>
+#include <sys/user.h>
 #include <string.h>
 #include <errno.h>
 #include <limits.h>
@@ -133,6 +134,23 @@ int print_all_managed_processes(){
         }
     }
     return flag;
+}
+
+void free_managed_process(managed_process *mp) {
+    if (mp == NULL) {
+        return;
+    }
+
+    // Free each string in the argv array, if it's allocated
+    if (mp->argv != NULL) {
+        for (int i = 0; mp->argv[i] != NULL; ++i) {
+            free(mp->argv[i]);
+        }
+        free(mp->argv); // Free the array itself
+    }
+
+    // Finally, free the struct
+    free(mp);
 }
 
 int is_empty(){
@@ -418,15 +436,15 @@ int peek_command(const char* argv[]){
 }
 
 int poke_command(const char* argv[]){
-    debug("1");
+    // debug("1");
     if (argv[0] == NULL || argv[1] == NULL || argv[2] == NULL || argv[3] != NULL) {
         return -1;
     }
-    debug("2");
+    // debug("2");
     // Validate deetId
     int deetId;
     if((deetId = charToInt(*argv[0])) == -1) return -1;
-    debug("3");
+    // debug("3");
 
     // Validate Address (hexadecimal)
     char *endptr;
@@ -435,26 +453,80 @@ int poke_command(const char* argv[]){
     if (errno != 0 || *endptr != '\0' || address == 0) {
         return -1;
     }
-    debug("4");
+    // debug("4");
 
     errno = 0;
     unsigned long long data = strtoull(argv[2], &endptr, 16);
     if (errno != 0 || *endptr != '\0' || data == 0) {
         return -1;
     }
-    debug("5");
+    // debug("5");
 
     managed_process* child_process = process_list[deetId];
     if(child_process == NULL)   return -1;
     if(child_process->state != PSTATE_STOPPED)  return -1;
     if(child_process->tflag != TRACED)  return -1;
 
-    debug("6");
+    // debug("6");
     errno = 0;
     long ret = ptrace(PTRACE_POKEDATA, child_process->pid, (void*)address, (void*)data);
-    debug("7");
+    // debug("7");
     if(ret == -1 && errno != 0){
         return -1;
+    }
+
+    return 0;
+}
+
+int bt_command(const char* argv[]){
+    if(argv[0] == NULL || argv[2] != NULL){
+        return -1;
+    }
+    long max_length = 10;
+    int deetId;
+    if((deetId = charToInt(*argv[0])) == -1) return -1;
+    managed_process* child_process = process_list[deetId];
+    if(child_process == NULL){
+        return -1;
+    }
+
+    if(argv[1] != NULL){
+        char *endptr;
+        max_length = strtol(argv[1], &endptr, 10);
+        if(endptr == argv[1]){
+            return -1;
+        }
+    }
+
+    struct user_regs_struct regs;
+    long stack_pointer, return_address;
+    int frame_count = 0;
+
+    if(ptrace(PTRACE_GETREGS, child_process->pid, NULL, &regs) == -1) {
+        perror("ptrace GETREGS");
+        ptrace(PTRACE_DETACH, child_process->pid, NULL, NULL);
+        return -1;
+    }
+
+    stack_pointer = regs.rbp; // Base pointer value
+
+    // Traversing the stack frames
+    while (frame_count < max_length) {
+        // Read the return address from the stack
+        return_address = ptrace(PTRACE_PEEKDATA, child_process->pid, stack_pointer + 8, NULL);
+        if (errno != 0) {
+            break;
+        }
+
+        // Print stack frame address and return address
+        printf("%016lx\t%016lx\n", stack_pointer, return_address);
+        frame_count++;
+
+        // Read the next stack pointer
+        stack_pointer = ptrace(PTRACE_PEEKDATA, child_process->pid, stack_pointer, NULL);
+        if (errno != 0 || stack_pointer == 0) {
+            break;
+        }
     }
 
     return 0;
@@ -480,6 +552,13 @@ int quit_command() {
             }
         }
     }
+
+    for(int i = 0; i < 10; i++){
+        if(process_list[i] != NULL){
+            free_managed_process(process_list[i]);
+        }
+    }
+
     return 0;
 }
 

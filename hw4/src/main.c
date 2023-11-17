@@ -128,7 +128,8 @@ int main(int argc, char *argv[]) {
             if(poke_command(args) == -1)
                 goto PRINTERR;
         } else if (strcmp(command, "bt") == 0) {
-            // Show a stack trace
+            if(bt_command(args) == -1)
+                goto PRINTERR;
         } else {
             PRINTERR:
             log_error(input_line);
