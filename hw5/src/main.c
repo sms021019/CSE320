@@ -24,6 +24,7 @@ char* hostname;
 char* port;
 int qflag = 0;
 
+
 int main(int argc, char* argv[]){
     // Option processing should be performed here.
     // Option '-p <port>' is required in order to specify the port number
@@ -33,7 +34,7 @@ int main(int argc, char* argv[]){
     socklen_t clientlen;
     struct sockaddr_storage clientaddr;  // Enough space for any address
     pthread_t tid;
-    //|| isInputValid(argc, argv) == -1
+
     if(argc < 2 || isInputValid(argc, argv) == -1){
         fprintf(stderr, "wrong input");
         exit(1);
@@ -93,6 +94,7 @@ int main(int argc, char* argv[]){
 
     // Close listening socket (never reached in this example)
     close(listenfd);
+    terminate(EXIT_FAILURE);
     return 0;
 
 }
@@ -154,7 +156,7 @@ int isInputValid(int argc, char* argv[]){
 }
 
 void sighupHandler(int sigNum){
-    terminate(sigNum);
+    terminate(EXIT_FAILURE);
 }
 
 /*
