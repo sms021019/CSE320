@@ -4,6 +4,7 @@
 #include "store.h"
 #include "csapp.h"
 #include "server.h"
+#include "protocol.h"
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -75,12 +76,16 @@ int main(int argc, char* argv[]){
         clientfdp = malloc(sizeof(int));  // Allocate space for client socket descriptor
         clientlen = sizeof(struct sockaddr_storage);
         *clientfdp = accept(listenfd, (struct sockaddr *)&clientaddr, &clientlen);
+
+
         if (*clientfdp < 0) {
             perror("Failed to accept connection");
             free(clientfdp);
             continue;
         }
-
+        // XACTO_PACKET temp_packet;
+        // proto_recv_packet(*clientfdp, &temp_packet, NULL);
+        // while(1) sleep(1);
         // Create a thread to handle the client request
         if (pthread_create(&tid, NULL, xacto_client_service, clientfdp) != 0) {
             perror("Failed to create thread");

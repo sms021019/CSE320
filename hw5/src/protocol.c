@@ -1,6 +1,8 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include "debug.h"
 #include "protocol.h"
 
 int proto_send_packet(int fd, XACTO_PACKET *pkt, void *data) {
@@ -30,12 +32,14 @@ int proto_send_packet(int fd, XACTO_PACKET *pkt, void *data) {
 
 
 int proto_recv_packet(int fd, XACTO_PACKET *pkt, void **data) {
+    debug("in function\n");
     // Read the packet header
     ssize_t bytes_read = read(fd, pkt, sizeof(XACTO_PACKET));
     if (bytes_read < sizeof(XACTO_PACKET)) {
         return -1;
     }
 
+    debug("bytes_read: %ld\n", bytes_read);
     // Convert multi-byte fields to host byte order
     pkt->serial = ntohl(pkt->serial);
     pkt->size = ntohl(pkt->size);
