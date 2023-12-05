@@ -20,7 +20,7 @@ struct client_registry {
 
 
 CLIENT_REGISTRY *creg_init(){
-	debug("Initialize client registry");
+	info("Initialize client registry");
 	CLIENT_REGISTRY *registry = malloc(sizeof(CLIENT_REGISTRY));
 	if(registry == NULL){
 		error("Memory allocating failed: CLIENT_REGISTRY");
@@ -88,7 +88,7 @@ int creg_unregister(CLIENT_REGISTRY *cr, int fd){
 	}
 	pthread_mutex_unlock(&mutex);
 	if(cr->size == 0){
-		debug("Releasing");
+		info("Releasing");
 		sem_post(&sem);
 	}
 	return 0;
@@ -96,7 +96,7 @@ int creg_unregister(CLIENT_REGISTRY *cr, int fd){
 
 void creg_wait_for_empty(CLIENT_REGISTRY *cr){
 	sem_wait(&sem);
-	debug("Size of registered clients reached zero.\n");
+	info("Size of registered clients reached zero.\n");
 }
 
 void creg_shutdown_all(CLIENT_REGISTRY *cr){

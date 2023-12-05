@@ -163,7 +163,7 @@ int isInputValid(int argc, char* argv[]){
 }
 
 void sighupHandler(int sigNum){
-    terminate(EXIT_FAILURE);
+    terminate(0);
 }
 
 /*
