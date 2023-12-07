@@ -9,7 +9,7 @@
 char* getTypeString(int type);
 
 int proto_send_packet(int fd, XACTO_PACKET *pkt, void *data) {
-    info("%s Packet recieved", getTypeString(pkt->type));
+    info("%s Packet received", getTypeString(pkt->type));
 
     // Write the packet header
     ssize_t bytes_written = write(fd, pkt, sizeof(XACTO_PACKET));
@@ -19,6 +19,7 @@ int proto_send_packet(int fd, XACTO_PACKET *pkt, void *data) {
 
     // Write the payload, if present
     if (ntohl(pkt->size) > 0 && data != NULL) {
+        debug("payload");
         bytes_written = write(fd, data, ntohl(pkt->size));
         if (bytes_written < ntohl(pkt->size)) {
             return -1;
@@ -51,7 +52,7 @@ int proto_recv_packet(int fd, XACTO_PACKET *pkt, void **datap) {
     if (bytes_read < sizeof(XACTO_PACKET)) {
         return -1;
     }
-    info("%s Packet recieved", getTypeString(pkt->type));
+    info("%s Packet received", getTypeString(pkt->type));
     info("Size: %d", ntohl(pkt->size));
 
     // Read the payload, if present

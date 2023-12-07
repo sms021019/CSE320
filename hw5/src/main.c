@@ -101,7 +101,7 @@ int main(int argc, char* argv[]){
 
     // Close listening socket (never reached in this example)
     close(listenfd);
-    terminate(EXIT_FAILURE);
+    terminate(EXIT_SUCCESS);
     return 0;
 
 }
@@ -163,7 +163,7 @@ int isInputValid(int argc, char* argv[]){
 }
 
 void sighupHandler(int sigNum){
-    terminate(0);
+    terminate(EXIT_SUCCESS);
 }
 
 /*
@@ -173,7 +173,7 @@ void terminate(int status) {
     // Shutdown all client connections.
     // This will trigger the eventual termination of service threads.
     creg_shutdown_all(client_registry);
-    
+    // debug("temp");
     debug("Waiting for service threads to terminate...");
     creg_wait_for_empty(client_registry);
     debug("All service threads terminated.");
