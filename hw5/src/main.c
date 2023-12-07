@@ -40,7 +40,7 @@ int main(int argc, char* argv[]){
 
     if(argc < 2 || isInputValid(argc, argv) == -1){
         fprintf(stderr, "wrong input");
-        exit(1);
+        exit(EXIT_SUCCESS);
     }
 
 
