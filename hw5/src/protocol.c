@@ -9,7 +9,22 @@
 char* getTypeString(int type);
 
 int proto_send_packet(int fd, XACTO_PACKET *pkt, void *data) {
-    info("%s Packet received", getTypeString(pkt->type));
+    // info("%s Packet received", getTypeString(pkt->type));
+
+
+    // debug("Packet serial: %d", pkt->serial);
+    // debug("htonl(pkt->seria): %d", ntohl(pkt->serial));
+    // debug("Packet status: %d", pkt->status);
+    // debug("Packet size: %d", pkt->size);
+    // debug("Packet null: %d", pkt->null);
+    // debug("Packet timestamp_sec: %d", pkt->timestamp_sec);
+    // debug("Packet timestamp_nsec: %d", pkt->timestamp_nsec);
+
+    // Convert multi-byte fields to network byte order
+    pkt->serial = htonl(pkt->serial);
+    pkt->size = htonl(pkt->size);
+    pkt->timestamp_sec = htonl(pkt->timestamp_sec);
+    pkt->timestamp_nsec = htonl(pkt->timestamp_nsec);
 
     // Write the packet header
     ssize_t bytes_written = write(fd, pkt, sizeof(XACTO_PACKET));
@@ -52,18 +67,30 @@ int proto_recv_packet(int fd, XACTO_PACKET *pkt, void **datap) {
     if (bytes_read < sizeof(XACTO_PACKET)) {
         return -1;
     }
-    info("%s Packet received", getTypeString(pkt->type));
-    info("Size: %d", ntohl(pkt->size));
+    // info("%s Packet received", getTypeString(pkt->type));
+    // debug("Packet serial: %d", pkt->serial);
+    // debug("htonl(pkt->seria): %d", ntohl(pkt->serial));
+    // debug("Packet status: %d", pkt->status);
+    // debug("Packet size: %d", pkt->size);
+    // debug("Packet null: %d", pkt->null);
+    // debug("Packet timestamp_sec: %d", pkt->timestamp_sec);
+    // debug("Packet timestamp_nsec: %d", pkt->timestamp_nsec);
+
+    // Convert multi-byte fields to network byte order
+    pkt->serial = ntohl(pkt->serial);
+    pkt->size = ntohl(pkt->size);
+    pkt->timestamp_sec = ntohl(pkt->timestamp_sec);
+    pkt->timestamp_nsec = ntohl(pkt->timestamp_nsec);
 
     // Read the payload, if present
-    if (ntohl(pkt->size) > 0) {
-        *datap = malloc(ntohl(pkt->size));
+    if (pkt->size > 0) {
+        *datap = malloc(pkt->size);
         if (*datap == NULL) {
             return -1;
         }
 
-        bytes_read = read(fd, *datap, ntohl(pkt->size));
-        if (bytes_read < ntohl(pkt->size)) {
+        bytes_read = read(fd, *datap, pkt->size);
+        if (bytes_read < pkt->size) {
             free(*datap);
             return -1;
         }

@@ -121,20 +121,6 @@ void trans_add_dependency(TRANSACTION *tp, TRANSACTION *dtp){
 	pthread_mutex_unlock(&tp->mutex);
 }
 
-// void wait_for_transaction(TRANSACTION *dtp) {
-//     if (dtp == NULL) {
-//         return;
-//     }
-
-//     pthread_mutex_lock(&dtp->mutex);
-//     while (dtp->status == TRANS_PENDING) {
-//         pthread_mutex_unlock(&dtp->mutex); // Unlock before waiting
-//         sem_wait(&dtp->sem);
-//         pthread_mutex_lock(&dtp->mutex); // Re-lock after waiting
-//     }
-//     pthread_mutex_unlock(&dtp->mutex);
-// }
-
 TRANS_STATUS trans_commit(TRANSACTION *tp){
 	int abort_flag = 0;
 	info("Transaction %d trying to commit", tp->id);
