@@ -6,7 +6,6 @@
 #include "server.h"
 #include "protocol.h"
 
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -17,7 +16,6 @@
 #include <unistd.h>
 #include <pthread.h>
 
-
 static void terminate(int status);
 int isInputValid(int argc, char* argv[]);
 void sighupHandler(int sigNum);
@@ -27,7 +25,6 @@ char* hostname;
 char* port;
 int qflag = 0;
 
-
 int main(int argc, char* argv[]){
     // Option processing should be performed here.
     // Option '-p <port>' is required in order to specify the port number
@@ -35,15 +32,13 @@ int main(int argc, char* argv[]){
 
     int listenfd, *clientfdp;
     socklen_t clientlen;
-    struct sockaddr_storage clientaddr;  // Enough space for any address
+    struct sockaddr_storage clientaddr;
     pthread_t tid;
 
     if(argc < 2 || isInputValid(argc, argv) == -1){
         fprintf(stderr, "wrong input");
         exit(EXIT_SUCCESS);
     }
-
-
 
     struct sigaction sa;
     sa.sa_handler = sighupHandler;
@@ -75,54 +70,32 @@ int main(int argc, char* argv[]){
     }
 
     while (1) {
-        clientfdp = malloc(sizeof(int));  // Allocate space for client socket descriptor
+        // Allocate space for client socket descriptor
+        clientfdp = malloc(sizeof(int));
         clientlen = sizeof(struct sockaddr_storage);
         *clientfdp = accept(listenfd, (struct sockaddr *)&clientaddr, &clientlen);
-
-
         if (*clientfdp < 0) {
             perror("Failed to accept connection");
             free(clientfdp);
             continue;
         }
-        // XACTO_PACKET temp_packet;
-        // proto_recv_packet(*clientfdp, &temp_packet, NULL);
-        // while(1) sleep(1);
-        // Create a thread to handle the client request
+
+        // Create new thread
         if (pthread_create(&tid, NULL, xacto_client_service, clientfdp) != 0) {
             perror("Failed to create thread");
             free(clientfdp);
             continue;
         }
 
-        // Detach the thread to handle its cleanup after finishing
+        // Detach the thread after finishing
         pthread_detach(tid);
     }
 
-    // Close listening socket (never reached in this example)
+    // Close listening socket
     close(listenfd);
     terminate(EXIT_SUCCESS);
     return 0;
 
-}
-
-int stringToInt(const char *str) {
-    int result = 0;
-
-    // Iterate through each character of the string
-    for (int i = 0; str[i] != '\0'; ++i) {
-        // Check for non-numeric characters
-        if (!isdigit(str[i])) {
-            // Non-numeric character found, stop processing
-            return -1;
-        }
-
-        // Convert character to digit and add to the result
-        int digit = str[i] - '0';
-        result = result * 10 + digit;
-    }
-
-    return result;
 }
 
 int isInputValid(int argc, char* argv[]){
@@ -173,7 +146,7 @@ void terminate(int status) {
     // Shutdown all client connections.
     // This will trigger the eventual termination of service threads.
     creg_shutdown_all(client_registry);
-    // debug("temp");
+
     debug("Waiting for service threads to terminate...");
     creg_wait_for_empty(client_registry);
     debug("All service threads terminated.");

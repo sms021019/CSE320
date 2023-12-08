@@ -33,28 +33,33 @@ XACTO_PACKET get_response_packet(uint32_t serial){
 
 
 void *xacto_client_service(void *arg){
+	// Registry Empty check
 	if(client_registry == NULL){
 		error("Client registry is empty");
 		return NULL;
 	}
+
+	// Extract file descriptor
 	int fd = *((int*)arg);
 	info("[%d] Starting client service", fd);
-	free(arg);
-
+	free(arg);	// The storage freed
+	// Thread detach from main
 	pthread_detach(pthread_self());
 
+	// Register the client file descriptor with client registry
 	if(creg_register(client_registry, fd) == -1){
 		error("creg_register failed");
 		return NULL;
 	}
 
+	//Create new transition
 	TRANSACTION *new_transaction = trans_create();
 	if(new_transaction == NULL){
 		error("trans_create failed");
 		return NULL;
 	}
-	// trans_show(new_transaction);
 
+	// Allocate the packet buffer and flags
 	PACKET_BUFFER *packet_buffer = malloc(sizeof(PACKET_BUFFER) * BUFFER_SIZE);
 	int get_flag = 0;
 	int put_flag = 0;
@@ -63,20 +68,23 @@ void *xacto_client_service(void *arg){
 	int commit_flag = 0;
 	int buffer_counter = 0;
 
-	while (1) {
+	while (1) {		// Thread main loop start
         XACTO_PACKET request_pkt;
         void* request_data = NULL;
 
+        // Receive packet from the user client
         if (proto_recv_packet(fd, &request_pkt, &request_data) == -1) {
         	error("proto_recv_packet failed");
             break;
         }
 
+        // Check for buffer overflow
 		if(buffer_counter >= BUFFER_SIZE){
 			error("Buffer overflow");
 			break;
 		}
 
+		// Flag control panel
         switch(request_pkt.type){
         	case XACTO_NO_PKT:
         		error("XACTO_NO_PKT");
@@ -129,7 +137,8 @@ void *xacto_client_service(void *arg){
         		break;
         }
 
-        if(put_flag){
+        // Request handler by flags
+        if(put_flag){	// put request handle
         	if(key_flag && value_flag){
         		BLOB *key_blob_pt = blob_create((char *)packet_buffer[1].data, packet_buffer[1].packet.size);
         		KEY *kp = key_create(key_blob_pt);
@@ -148,7 +157,7 @@ void *xacto_client_service(void *arg){
 		            break;
 		        }
 
-		        // deallocate data and reset flags
+		        // Deallocate data and reset flags
 		        clear_packet_buffer(packet_buffer, buffer_counter);
 		        get_flag = 0;
 				put_flag = 0;
@@ -157,7 +166,7 @@ void *xacto_client_service(void *arg){
 				commit_flag = 0;
 				buffer_counter = 0;
         	}
-        }else if(get_flag){
+        }else if(get_flag){		// Get request handle
         	if(key_flag){
         		BLOB *key_blob_pt = blob_create((char *)packet_buffer[1].data, packet_buffer[1].packet.size);
         		KEY *kp = key_create(key_blob_pt);
@@ -187,7 +196,7 @@ void *xacto_client_service(void *arg){
 			        }
 		        }
 
-		        // deallocate data and reset flags
+		        // Deallocate data and reset flags
 		        clear_packet_buffer(packet_buffer, buffer_counter);
 		        get_flag = 0;
 				put_flag = 0;
@@ -196,8 +205,10 @@ void *xacto_client_service(void *arg){
 				commit_flag = 0;
 				buffer_counter = 0;
         	}
-        }else if(commit_flag){
+        }else if(commit_flag){		// Commit request handle
         	trans_commit(new_transaction);
+
+        	// Send reply
         	XACTO_PACKET commit_reply = get_response_packet(packet_buffer[0].packet.serial);
         	if(proto_send_packet(fd, &commit_reply, NULL) == -1){
         		error("proto_send_packet failed");
@@ -205,6 +216,8 @@ void *xacto_client_service(void *arg){
         		free(packet_buffer);
         		return NULL;
         	}
+
+        	// Ending client service
     		info("[%d] Ending client service", fd);
     		if (close(fd) == -1) {
 			    error("Error closing socket");
@@ -221,7 +234,7 @@ void *xacto_client_service(void *arg){
     }//END of the while loop
 
 
-
+    // Abort the transtion and end the client service
     info("[%d] Ending client service", fd);
     trans_abort(new_transaction);
     creg_unregister(client_registry, fd);

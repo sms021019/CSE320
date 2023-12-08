@@ -24,14 +24,12 @@ BLOB *blob_create(char *content, size_t size){
         free(new_blob);
         return NULL;
     }
-    // debug("content: %s", content);
-    // debug("size: %ld", size);
+
     memcpy(new_blob->content, content, size);
     new_blob->content[size] = '\0';
     memcpy(new_blob->prefix, content, size);
     new_blob->prefix[size] = '\0';
 
-    // debug("new_blob->content: %s", new_blob->content);
 	blob_ref(new_blob, "newly created blob");
 
 	return new_blob;

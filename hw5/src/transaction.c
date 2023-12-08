@@ -2,11 +2,8 @@
 #include "debug.h"
 #include <stdlib.h>
 
-
-
 void trans_init(void){
 	info("Initialize transaction manager");
-	// trans_list = malloc(sizeof(TRANSACTION));
 	trans_list.id = 0;
 	trans_list.refcnt = 0;
     trans_list.status = TRANS_PENDING;
@@ -25,11 +22,15 @@ void trans_fini(void){
 TRANSACTION *trans_create(void){
 	static unsigned int transaction_id_counter = 0;
 	info("Create new transaction %d", transaction_id_counter);
+
+	// Allocate memory for new transaction
 	TRANSACTION *new_transaction = malloc(sizeof(TRANSACTION));
 	if(new_transaction == NULL){
 		error("new transaction malloc failed");
 		return NULL;
 	}
+
+	// Initialize other fields
 	new_transaction->id = __atomic_fetch_add(&transaction_id_counter, 1, __ATOMIC_SEQ_CST);
 	new_transaction->status = TRANS_PENDING;
 	new_transaction->depends = NULL;
@@ -46,7 +47,10 @@ TRANSACTION *trans_create(void){
 		free(new_transaction);
 		return NULL;
 	}
+
+	// Increase the reference counter of that transcation
 	trans_ref(new_transaction, "newly created transaction");
+
 	//Adding a new transaction into double linked list
 	pthread_mutex_lock(&trans_list.mutex);
 	new_transaction->next = trans_list.next;
@@ -70,6 +74,8 @@ void trans_unref(TRANSACTION *tp, char *why){
 	info("Decrease ref count on transaction %d (%d -> %d) for %s", tp->id, tp->refcnt, tp->refcnt-1, why);
 	pthread_mutex_lock(&tp->mutex);
 	tp->refcnt--;
+
+	// Remove the transaction if its reference coutner reached to zero
 	if(tp->refcnt == 0){
 		info("Free transaction %d", tp->id);
 		pthread_mutex_lock(&trans_list.mutex);
@@ -77,6 +83,7 @@ void trans_unref(TRANSACTION *tp, char *why){
 		tp->next->prev = tp->prev;
 		pthread_mutex_unlock(&trans_list.mutex);
 
+		// Deallocate the dependencies that linked with this transaction
 		DEPENDENCY *dp = tp->depends;
 		while(dp != NULL){
 			DEPENDENCY *temp = dp;
@@ -94,7 +101,7 @@ void trans_unref(TRANSACTION *tp, char *why){
 }
 
 void trans_add_dependency(TRANSACTION *tp, TRANSACTION *dtp){
-
+	// Allocate memory for the new dependency for dtp
 	DEPENDENCY *new_dependency = malloc(sizeof(DEPENDENCY));
 	if(new_dependency == NULL){
 		error("trans_add_dependency new dependency malloc failed");
@@ -105,7 +112,7 @@ void trans_add_dependency(TRANSACTION *tp, TRANSACTION *dtp){
 	new_dependency->trans = dtp;
 
 	pthread_mutex_lock(&tp->mutex);
-
+	// Search through tp->depends to check whether the dtp is already in it
 	DEPENDENCY *temp = tp->depends;
 	while(temp != NULL){
 		if(temp->trans == dtp){
@@ -115,6 +122,8 @@ void trans_add_dependency(TRANSACTION *tp, TRANSACTION *dtp){
 		}
 		temp = temp->next;
 	}
+
+	// Add dtp into tp->depends
 	new_dependency->next = tp->depends;
 	tp->depends = new_dependency;
 	trans_ref(dtp, "adding dependency");
@@ -183,7 +192,6 @@ TRANS_STATUS trans_abort(TRANSACTION *tp){
 }
 
 TRANS_STATUS trans_get_status(TRANSACTION *tp) {
-
     pthread_mutex_lock(&tp->mutex);
     TRANS_STATUS status = tp->status;
     pthread_mutex_unlock(&tp->mutex);

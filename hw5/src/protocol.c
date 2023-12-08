@@ -10,8 +10,6 @@ char* getTypeString(int type);
 
 int proto_send_packet(int fd, XACTO_PACKET *pkt, void *data) {
     // info("%s Packet received", getTypeString(pkt->type));
-
-
     // debug("Packet serial: %d", pkt->serial);
     // debug("htonl(pkt->seria): %d", ntohl(pkt->serial));
     // debug("Packet status: %d", pkt->status);
