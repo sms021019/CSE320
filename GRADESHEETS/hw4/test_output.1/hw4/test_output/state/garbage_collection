@@ -1,0 +1,35 @@
+=========== TEST LOG FOR: garbage_collection ===========
+	[  0] EXPECT(STARTUP) TIMEOUT(10 ms)
+	[expect STARTUP]
+	Waiting for connection...
+	Connected to child: fd = 10
+[0000.001640]: <~~ STARTUP (sent at 0000.001588)
+	Event type matched expected type STARTUP (0 usec, limit 10000)	
+	[  1] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT]
+[0000.001672]: <~~ PROMPT (sent at 0000.001658)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[  2] SEND(run echo 0) TIMEOUT(10 ms)
+[0000.001698]: ~~> run echo 0
+	[  3] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [3]SHOW]. Now: [0000.001724] Timeout: [0000.101724]
+	[  4] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [4]SHOW]. Now: [0000.001727] Timeout: [0000.101727]
+	[  5] EXPECT(INPUT) TIMEOUT(10 ms)
+	[expect INPUT] [queue: [3]SHOW [4]SHOW]
+[0000.001765]: <~~ INPUT (sent at 0000.001726)
+	Event type matched expected type INPUT (0 usec, limit 10000)	
+	[  6] EXPECT(CHANGE) TIMEOUT(10 ms)
+	[expect CHANGE] [queue: [3]SHOW [4]SHOW]
+[0000.001952]: <~~ CHANGE (sent at 0000.001890)
+	[901415: none -> running]
+	Event type matched expected type CHANGE (0 usec, limit 10000)	
+	[  7] EXPECT(SIGNAL) TIMEOUT(100 ms)
+	[expect SIGNAL] [queue: [3]SHOW [4]SHOW]
+[0000.001996]: <~~ [SHOW    ] '0	901415	T	running		echo 0'
+	Async event matched: SHOW
+	[  7] EXPECT(SIGNAL) TIMEOUT(100 ms)
+	[expect SIGNAL] [queue: [4]SHOW]
+[0000.002029]: <~~ PROMPT (sent at 0000.001931)
+!!! Event type (PROMPT) did not match expected type SIGNAL
+=========== ABORTING TEST: garbage_collection ===========

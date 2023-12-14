@@ -1,0 +1,31 @@
+=========== TEST LOG FOR: show ===========
+	[  0] EXPECT(STARTUP) TIMEOUT(100 ms)
+	[expect STARTUP]
+	Waiting for connection...
+	Connected to child: fd = 10
+[0000.001654]: <~~ STARTUP (sent at 0000.001626)
+	Event type matched expected type STARTUP (0 usec, limit 100000)	
+	[  1] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT]
+[0000.002533]: <~~ PROMPT (sent at 0000.002487)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[  2] SEND(run ls)
+[0000.002551]: ~~> run ls
+	[  3] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [3]SHOW]. Now: [0000.002561] Timeout: [0000.102561]
+	[  4] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [4]SHOW]. Now: [0000.002563] Timeout: [0000.102563]
+	[  5] EXPECT(INPUT) TIMEOUT(10 ms)
+	[expect INPUT] [queue: [3]SHOW [4]SHOW]
+[0000.003360]: <~~ INPUT (sent at 0000.003306)
+	Event type matched expected type INPUT (0 usec, limit 10000)	
+	[  6] EXPECT(CHANGE) TIMEOUT(10 ms)
+	[expect CHANGE] [queue: [3]SHOW [4]SHOW]
+[0000.004078]: <~~ CHANGE (sent at 0000.004052)
+	[77052: none -> running]
+	Event type matched expected type CHANGE (0 usec, limit 10000)	
+	[  7] EXPECT(SIGNAL) TIMEOUT(100 ms)
+	[expect SIGNAL] [queue: [3]SHOW [4]SHOW]
+[0000.004457]: <~~ PROMPT (sent at 0000.004450)
+!!! Event type (PROMPT) did not match expected type SIGNAL
+=========== ABORTING TEST: show ===========

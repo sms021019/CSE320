@@ -1,0 +1,24 @@
+?
+=========== TEST LOG FOR: poke_error ===========
+	[  0] EXPECT(STARTUP) TIMEOUT(100 ms)
+	[expect STARTUP]
+	Waiting for connection...
+	Connected to child: fd = 10
+[0000.000547]: <~~ STARTUP (sent at 0000.000541)
+	Event type matched expected type STARTUP (0 usec, limit 100000)	
+	[  1] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT]
+[0000.000830]: <~~ PROMPT (sent at 0000.000823)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[  2] SEND(poke 0) EXPECT(INPUT)
+[0000.000841]: ~~> poke 0
+	[expect INPUT]
+[0000.001234]: <~~ INPUT (sent at 0000.001227)
+	Event type matched expected type INPUT 	
+	[  3] EXPECT(ERROR)
+	[expect ERROR]
+[0000.001505]: <~~ ERROR (sent at 0000.001496)
+	ERROR_EVENT: poke
+	Event type matched expected type ERROR 	
+	Target process 76894 terminated with status 0xd
+=========== END OF TEST: poke_error ===========

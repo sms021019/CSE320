@@ -1,0 +1,15 @@
+=========== TEST LOG FOR: start_eof ===========
+	[  0] EXPECT(STARTUP) TIMEOUT(100 ms)
+	[expect STARTUP]
+	Waiting for connection...
+	Connected to child: fd = 10
+[0000.000551]: <~~ STARTUP (sent at 0000.000545)
+	Event type matched expected type STARTUP (0 usec, limit 100000)	
+	[  1] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT]
+[0000.000846]: <~~ PROMPT (sent at 0000.000837)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[  2] EXPECT(EOF) FLAGS(0x1)
+	[expect EOF]
+	Target process 0 terminated with status 0x0
+=========== END OF TEST: start_eof ===========

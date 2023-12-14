@@ -1,0 +1,68 @@
+=========== TEST LOG FOR: help_command ===========
+	[  0] EXPECT(STARTUP) TIMEOUT(100 ms)
+	[expect STARTUP]
+	Waiting for connection...
+	Connected to child: fd = 10
+[0000.002078]: <~~ STARTUP (sent at 0000.001773)
+	Event type matched expected type STARTUP (0 usec, limit 100000)	
+	[  1] EXPECT(PROMPT) TIMEOUT(100 ms)
+	[expect PROMPT]
+[0000.002111]: <~~ PROMPT (sent at 0000.001858)
+	Event type matched expected type PROMPT (0 usec, limit 100000)	
+	[  2] SEND(help)
+[0000.002120]: ~~> help
+	[  3] EXPECT(INPUT) FLAGS(0x1) TIMEOUT(10 ms)
+	[expect INPUT]
+[0000.002242]: <~~ INPUT (sent at 0000.002162)
+	Event type matched expected type INPUT (0 usec, limit 10000)	
+	[  4] SEND(quit)
+[0000.002253]: ~~> quit
+	[  5] EXPECT(SHUTDOWN) FLAGS(0x1) TIMEOUT(1000 ms)
+	[expect SHUTDOWN]
+[0000.002278]: <~~ [OTHER   ] 'Available commands:
+'
+	Event type (OTHER) does not match expected (SHUTDOWN) -- skipping
+[0000.002294]: <~~ [OTHER   ] 'help -- Print this help message
+'
+	Event type (OTHER) does not match expected (SHUTDOWN) -- skipping
+[0000.002305]: <~~ [OTHER   ] 'quit -- Quit the program
+'
+	Event type (OTHER) does not match expected (SHUTDOWN) -- skipping
+[0000.002315]: <~~ [OTHER   ] 'show -- Show process info
+'
+	Event type (OTHER) does not match expected (SHUTDOWN) -- skipping
+[0000.002325]: <~~ [OTHER   ] 'run -- Start a process
+'
+	Event type (OTHER) does not match expected (SHUTDOWN) -- skipping
+[0000.002336]: <~~ [OTHER   ] 'stop -- Stop a running process
+'
+	Event type (OTHER) does not match expected (SHUTDOWN) -- skipping
+[0000.002347]: <~~ [OTHER   ] 'cont -- Continue a stopped process
+'
+	Event type (OTHER) does not match expected (SHUTDOWN) -- skipping
+[0000.002364]: <~~ [OTHER   ] 'release -- Stop tracing a process, allowing it to continue normally
+'
+	Event type (OTHER) does not match expected (SHUTDOWN) -- skipping
+[0000.002379]: <~~ [OTHER   ] 'wait -- Wait for a process to enter a specified state
+'
+	Event type (OTHER) does not match expected (SHUTDOWN) -- skipping
+[0000.002392]: <~~ [OTHER   ] 'kill -- Forcibly terminate a process
+'
+	Event type (OTHER) does not match expected (SHUTDOWN) -- skipping
+[0000.002407]: <~~ [OTHER   ] 'peek -- Read from the address space of a traced process
+'
+	Event type (OTHER) does not match expected (SHUTDOWN) -- skipping
+[0000.002421]: <~~ [OTHER   ] 'poke -- Write to the address space of a traced process
+'
+	Event type (OTHER) does not match expected (SHUTDOWN) -- skipping
+[0000.002435]: <~~ [OTHER   ] 'bt -- Show a stack trace for a traced process
+'
+	Event type (OTHER) does not match expected (SHUTDOWN) -- skipping
+[0000.002454]: <~~ PROMPT (sent at 0000.002200)
+	Event type (PROMPT) does not match expected (SHUTDOWN) -- skipping
+[0000.002764]: <~~ INPUT (sent at 0000.002471)
+	Event type (INPUT) does not match expected (SHUTDOWN) -- skipping
+[0000.002785]: <~~ SHUTDOWN (sent at 0000.002493)
+	Event type matched expected type SHUTDOWN (0 usec, limit 1000)	
+	Target process 901329 terminated with status 0x0
+=========== END OF TEST: help_command ===========

@@ -1,0 +1,148 @@
+--ascii is deprecated. Use LANG/LC_* variables to control encoding, and TERM/--color to control colors.
+[----] Criterion v2.4.1-13-g2f48d0f-dirty (bleeding)
+[====] Running 3 tests from basecode:
+[RUN ] basecode::run_echo
+Running test run_echo on target bin/deet. Output log: ./test_output/basecode/run_echo
+[----] tests/__helper.c:77: Assertion Failed
+[----]   
+[----]   The test driver returned an error (-1)
+[----]   
+[FAIL] basecode::run_echo: (0.00s)
+[RUN ] basecode::run_sleep_no_wait
+Running test run_sleep_no_wait on target bin/deet. Output log: ./test_output/basecode/run_sleep_no_wait
+[----] tests/__helper.c:172: Assertion Failed
+[----]   
+[----]   Old state did not match expected. Got: none | Exp: running
+[----]   
+[FAIL] basecode::run_sleep_no_wait: (0.00s)
+[RUN ] basecode::run_sleep_wait
+Running test run_sleep_wait on target bin/deet. Output log: ./test_output/basecode/run_sleep_wait
+[----] tests/__helper.c:94: Assertion Failed
+[----]   
+[----]   Deet ID did not match. Got: 1 | Exp: 0
+[----]   
+[FAIL] basecode::run_sleep_wait: (0.00s)
+[====] Running 7 tests from basic:
+[RUN ] basic::poke_error
+Running test poke_error on target bin/deet. Output log: ./test_output/basic/poke_error
+[PASS] basic::poke_error: (0.00s)
+[RUN ] basic::run
+Running test run on target bin/deet. Output log: ./test_output/basic/run
+[PASS] basic::run: (0.00s)
+[RUN ] basic::run_no_arg
+Running test run_no_arg on target bin/deet. Output log: ./test_output/basic/run_no_arg
+[PASS] basic::run_no_arg: (0.00s)
+[RUN ] basic::show_error
+Running test show_error on target bin/deet. Output log: ./test_output/basic/show_error
+[----] tests/__helper.c:77: Assertion Failed
+[----]   
+[----]   The test driver returned an error (-1)
+[----]   
+[FAIL] basic::show_error: (0.00s)
+[RUN ] basic::start_empty_eof
+Running test start_empty_eof on target bin/deet. Output log: ./test_output/basic/start_empty_eof
+[PASS] basic::start_empty_eof: (0.00s)
+[RUN ] basic::start_eof
+Running test start_eof on target bin/deet. Output log: ./test_output/basic/start_eof
+[PASS] basic::start_eof: (0.00s)
+[RUN ] basic::start_quit_shutdown
+Running test start_quit_shutdown on target bin/deet. Output log: ./test_output/basic/start_quit_shutdown
+[PASS] basic::start_quit_shutdown: (0.00s)
+[====] Running 5 tests from cli:
+[RUN ] cli::bogus_input
+Running test bogus_input on target bin/deet. Output log: ./test_output/cli/bogus_input
+[PASS] cli::bogus_input: (0.00s)
+[RUN ] cli::help_command
+Running test help_command on target bin/deet. Output log: ./test_output/cli/help_command
+[PASS] cli::help_command: (0.00s)
+[RUN ] cli::invalid_cont_with_no_processes
+Running test invalid_cont_with_no_processes on target bin/deet. Output log: ./test_output/cli/invalid_cont_with_no_processes
+[PASS] cli::invalid_cont_with_no_processes: (0.00s)
+[RUN ] cli::newline_only
+Running test newline_only on target bin/deet. Output log: ./test_output/cli/newline_only
+[PASS] cli::newline_only: (0.01s)
+[RUN ] cli::quit_with_stopped_process
+Running test quit_with_stopped_process on target bin/deet. Output log: ./test_output/cli/quit_with_stopped_process
+[PASS] cli::quit_with_stopped_process: (0.00s)
+[====] Running 7 tests from peek_poke:
+[RUN ] peek_poke::backtrace_basic
+Running test backtrace_basic on target bin/deet. Output log: ./test_output/peek_poke/backtrace_basic
+[----] tests/__helper.c:77: Assertion Failed
+[----]   
+[----]   The test driver returned an error (-1)
+[----]   
+[FAIL] peek_poke::backtrace_basic: (0.00s)
+[RUN ] peek_poke::peek_multiple
+Running test peek_multiple on target bin/deet. Output log: ./test_output/peek_poke/peek_multiple
+[----] tests/__helper.c:77: Assertion Failed
+[----]   
+[----]   The test driver returned an error (-1)
+[----]   
+[FAIL] peek_poke::peek_multiple: (0.00s)
+[RUN ] peek_poke::peek_one
+Running test peek_one on target bin/deet. Output log: ./test_output/peek_poke/peek_one
+[----] tests/__helper.c:77: Assertion Failed
+[----]   
+[----]   The test driver returned an error (-1)
+[----]   
+[FAIL] peek_poke::peek_one: (0.00s)
+[RUN ] peek_poke::peek_unreadable
+Running test peek_unreadable on target bin/deet. Output log: ./test_output/peek_poke/peek_unreadable
+[----] tests/__helper.c:77: Assertion Failed
+[----]   
+[----]   The test driver returned an error (-1)
+[----]   
+[FAIL] peek_poke::peek_unreadable: (0.00s)
+[RUN ] peek_poke::poke_multiple
+Running test poke_multiple on target bin/deet. Output log: ./test_output/peek_poke/poke_multiple
+[----] tests/__helper.c:77: Assertion Failed
+[----]   
+[----]   The test driver returned an error (-1)
+[----]   
+[FAIL] peek_poke::poke_multiple: (0.00s)
+[RUN ] peek_poke::poke_one
+Running test poke_one on target bin/deet. Output log: ./test_output/peek_poke/poke_one
+[----] tests/__helper.c:77: Assertion Failed
+[----]   
+[----]   The test driver returned an error (-1)
+[----]   
+[FAIL] peek_poke::poke_one: (0.00s)
+[RUN ] peek_poke::poke_unwritable
+Running test poke_unwritable on target bin/deet. Output log: ./test_output/peek_poke/poke_unwritable
+[----] tests/__helper.c:77: Assertion Failed
+[----]   
+[----]   The test driver returned an error (-1)
+[----]   
+[FAIL] peek_poke::poke_unwritable: (0.00s)
+[====] Running 2 tests from state:
+[RUN ] state::garbage_collection
+Running test garbage_collection on target bin/deet. Output log: ./test_output/state/garbage_collection
+[----] tests/__helper.c:77: Assertion Failed
+[----]   
+[----]   The test driver returned an error (-1)
+[----]   
+[FAIL] state::garbage_collection: (0.00s)
+[RUN ] state::show
+Running test show on target bin/deet. Output log: ./test_output/state/show
+[----] tests/__helper.c:77: Assertion Failed
+[----]   
+[----]   The test driver returned an error (-1)
+[----]   
+[FAIL] state::show: (0.00s)
+[====] Running 2 tests from state_change:
+[RUN ] state_change::release
+Running test release on target bin/deet. Output log: ./test_output/state_change/release
+[----] tests/__helper.c:77: Assertion Failed
+[----]   
+[----]   The test driver returned an error (-1)
+[----]   
+[FAIL] state_change::release: (0.00s)
+[RUN ] state_change::stop
+Running test stop on target bin/deet. Output log: ./test_output/state_change/stop
+[----] tests/__helper.c:77: Assertion Failed
+[----]   
+[----]   The test driver returned an error (-1)
+[----]   
+[FAIL] state_change::stop: (0.00s)
+[----] Writing xml report in `crit.xml`.
+[====] Synthesis: Tested: 26 | Passing: 11 | Failing: 15 | Crashing: 0 

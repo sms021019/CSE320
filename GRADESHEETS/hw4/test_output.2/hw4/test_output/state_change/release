@@ -1,0 +1,173 @@
+function a @ 0x55be4c9531d0, argument x @ 0x7ffc8fa109f8 (=0xfedcba98)
+function b @ 0x55be4c953225: argument x @ 0x7ffc8fa109d8 (=0xedcba987)
+function c @ 0x55be4c95327a: argument x @ 0x7ffc8fa109b8 (=0xdcba9876)
+function d @ 0x55be4c9532cf: argument x @ 0x7ffc8fa10998 (=0xcba98765)
+function e @ 0x55be4c953324: argument x @ 0x7ffc8fa10978 (=0xba987654)
+function f @ 0x55be4c953389 called
+static_variable @ 0x55be4c956030 (=0)
+local_variable @ 0x7ffc8fa10950 (=a9876543)
+=========== TEST LOG FOR: release ===========
+	[  0] EXPECT(STARTUP) TIMEOUT(100 ms)
+	[expect STARTUP]
+	Waiting for connection...
+	Connected to child: fd = 10
+[0000.000708]: <~~ STARTUP (sent at 0000.000682)
+	Event type matched expected type STARTUP (0 usec, limit 100000)	
+	[  1] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT]
+[0000.001515]: <~~ PROMPT (sent at 0000.001496)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[  2] SEND(run testprog/tp)
+[0000.001524]: ~~> run testprog/tp
+	[  3] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [3]SHOW]. Now: [0000.001551] Timeout: [0000.101551]
+	[  4] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [4]SHOW]. Now: [0000.001552] Timeout: [0000.101552]
+	[  5] EXPECT(INPUT) TIMEOUT(10 ms)
+	[expect INPUT] [queue: [3]SHOW [4]SHOW]
+[0000.001785]: <~~ INPUT (sent at 0000.001779)
+	Event type matched expected type INPUT (0 usec, limit 10000)	
+	[  6] EXPECT(CHANGE) TIMEOUT(10 ms)
+	[expect CHANGE] [queue: [3]SHOW [4]SHOW]
+[0000.002108]: <~~ CHANGE (sent at 0000.002093)
+	[77060: none -> running]
+	Event type matched expected type CHANGE (0 usec, limit 10000)	
+	[  7] EXPECT(SIGNAL) TIMEOUT(100 ms)
+	[expect SIGNAL] [queue: [3]SHOW [4]SHOW]
+[0000.002432]: <~~ SIGNAL (sent at 0000.002416)
+	Event type matched expected type SIGNAL (0 usec, limit 100000)	
+	[  8] EXPECT(CHANGE) TIMEOUT(10 ms)
+	[expect CHANGE] [queue: [3]SHOW [4]SHOW]
+[0000.002441]: <~~ [SHOW    ] '0	77060	T	running		testprog/tp'
+	Async event matched: SHOW
+	[  8] EXPECT(CHANGE) TIMEOUT(10 ms)
+	[expect CHANGE] [queue: [4]SHOW]
+[0000.002639]: <~~ CHANGE (sent at 0000.002624)
+	[77060: running -> stopped]
+	Event type matched expected type CHANGE (0 usec, limit 10000)	
+	[  9] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [4]SHOW]
+[0000.002833]: <~~ PROMPT (sent at 0000.002825)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[ 10] SEND(cont 0)
+[0000.002836]: ~~> cont 0
+	[ 11] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(10 ms)
+	Adding a new event to the queue: [expect [11]SHOW]. Now: [0000.002838] Timeout: [0000.012838]
+	[ 12] EXPECT(INPUT) TIMEOUT(10 ms)
+	[expect INPUT] [queue: [4]SHOW [11]SHOW]
+[0000.002843]: <~~ [SHOW    ] '0	77060	T	stopped		testprog/tp'
+	Async event matched: SHOW
+	[ 12] EXPECT(INPUT) TIMEOUT(10 ms)
+	[expect INPUT] [queue: [11]SHOW]
+[0000.003050]: <~~ INPUT (sent at 0000.003039)
+	Event type matched expected type INPUT (0 usec, limit 10000)	
+	[ 13] EXPECT(CHANGE) TIMEOUT(10 ms)
+	[expect CHANGE] [queue: [11]SHOW]
+[0000.003259]: <~~ CHANGE (sent at 0000.003242)
+	[77060: stopped -> running]
+	Event type matched expected type CHANGE (0 usec, limit 10000)	
+	[ 14] EXPECT(SIGNAL) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [14]SIGNAL]. Now: [0000.003262] Timeout: [0000.103262]
+	[ 15] EXPECT(CHANGE) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [15]CHANGE]. Now: [0000.003262] Timeout: [0000.103262]
+	[ 16] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [16]SHOW]. Now: [0000.003263] Timeout: [0000.103263]
+	[ 17] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [11]SHOW [14]SIGNAL [15]CHANGE [16]SHOW]
+[0000.003449]: <~~ PROMPT (sent at 0000.003443)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[ 18] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [11]SHOW [14]SIGNAL [15]CHANGE [16]SHOW]
+[0000.003456]: <~~ [SHOW    ] '0	77060	T	running		testprog/tp'
+	Async event matched: SHOW
+	[ 18] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [14]SIGNAL [15]CHANGE [16]SHOW]
+[0000.007921]: <~~ SIGNAL (sent at 0000.007899)
+	Async event matched: SIGNAL
+	[ 18] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [15]CHANGE [16]SHOW]
+[0000.008125]: <~~ CHANGE (sent at 0000.008109)
+	Async event matched: CHANGE
+	[77060: running -> stopped]
+	[ 18] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [16]SHOW]
+[0000.018151]: Driver: timeout (0, 10000)
+[0000.018167]: <~~ [SHOW    ] '0	7706function f @ 0x55be4c953389 called
+static_variable @ 0x55be4c956030 (=0)
+local_variable @ 0x7ffc8fa10950 (=a9876543)
+0	T	stopped		testprog/tp'
+	Async event matched: SHOW
+	[ 18] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT]
+[0000.032302]: Driver: timeout (0, 10000)
+Optionally expected event PROMPT did not arrive before timeout -- advancing
+	[ 19] FLAGS(0x8) TIMEOUT(100 ms)
+	Async event queue is empty, as expected
+	[ 20] SEND(release 0)
+[0000.032308]: ~~> release 0
+	[ 21] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [21]SHOW]. Now: [0000.032333] Timeout: [0000.132333]
+	[ 22] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [22]SHOW]. Now: [0000.032334] Timeout: [0000.132334]
+	[ 23] EXPECT(INPUT) TIMEOUT(10 ms)
+	[expect INPUT] [queue: [21]SHOW [22]SHOW]
+[0000.032367]: <~~ INPUT (sent at 0000.032354)
+	Event type matched expected type INPUT (0 usec, limit 10000)	
+	[ 24] EXPECT(CHANGE) TIMEOUT(10 ms)
+	[expect CHANGE] [queue: [21]SHOW [22]SHOW]
+[0000.033055]: <~~ CHANGE (sent at 0000.033045)
+	[77060: stopped -> running]
+	Event type matched expected type CHANGE (0 usec, limit 10000)	
+	[ 25] EXPECT(SIGNAL) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [25]SIGNAL]. Now: [0000.033060] Timeout: [0000.133060]
+	[ 26] EXPECT(CHANGE) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [26]CHANGE]. Now: [0000.033061] Timeout: [0000.133061]
+	[ 27] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [21]SHOW [22]SHOW [25]SIGNAL [26]CHANGE]
+[0000.033401]: <~~ PROMPT (sent at 0000.033394)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[ 28] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [21]SHOW [22]SHOW [25]SIGNAL [26]CHANGE]
+[0000.033436]: <~~ [SHOW    ] '0	77060	U	running		testprog/tp'
+	Async event matched: SHOW
+	[ 28] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [22]SHOW [25]SIGNAL [26]CHANGE]
+[0000.033887]: <~~ SIGNAL (sent at 0000.033880)
+	Async event matched: SIGNAL
+	[ 28] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [22]SHOW [26]CHANGE]
+[0000.034146]: <~~ CHANGE (sent at 0000.034138)
+	Async event matched: CHANGE
+	[77060: running -> stopped]
+	[ 28] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [22]SHOW]
+[0000.044178]: Driver: timeout (0, 10000)
+[0000.044189]: <~~ [SHOW    ] '0	77060	U	stopped		testprog/tp'
+	Async event matched: SHOW
+	[ 28] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT]
+[0000.054226]: Driver: timeout (0, 10000)
+Optionally expected event PROMPT did not arrive before timeout -- advancing
+	[ 29] FLAGS(0x8) TIMEOUT(100 ms)
+	Async event queue is empty, as expected
+	[ 30] SEND(quit) EXPECT(INPUT) FLAGS(0x1)
+[0000.054234]: ~~> quit
+	[expect INPUT]
+[0000.054258]: <~~ INPUT (sent at 0000.054248)
+	Event type matched expected type INPUT 	
+	[ 31] EXPECT(SHUTDOWN) FLAGS(0x1) TIMEOUT(100 ms)
+	[expect SHUTDOWN]
+[0000.054948]: <~~ CHANGE (sent at 0000.054935)
+	[77060: stopped -> killed]
+	Event type (CHANGE) does not match expected (SHUTDOWN) -- skipping
+[0000.055560]: <~~ SIGNAL (sent at 0000.055549)
+	Event type (SIGNAL) does not match expected (SHUTDOWN) -- skipping
+[0000.055571]: <~~ [SHOW    ] '0	77060	U	killed		testprog/tp'
+	Event type (SHOW) does not match expected (SHUTDOWN) -- skipping
+[0000.055942]: <~~ CHANGE (sent at 0000.055932)
+	[77060: killed -> dead]
+	Event type (CHANGE) does not match expected (SHUTDOWN) -- skipping
+[0000.056207]: <~~ SHUTDOWN (sent at 0000.056200)
+	Event type matched expected type SHUTDOWN (0 usec, limit 100000)	
+	Target process 77059 terminated with status 0x0
+=========== END OF TEST: release ===========

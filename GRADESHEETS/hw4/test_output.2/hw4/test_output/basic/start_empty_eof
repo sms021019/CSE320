@@ -1,0 +1,24 @@
+=========== TEST LOG FOR: start_empty_eof ===========
+	[  0] EXPECT(STARTUP) TIMEOUT(100 ms)
+	[expect STARTUP]
+	Waiting for connection...
+	Connected to child: fd = 10
+[0000.000615]: <~~ STARTUP (sent at 0000.000531)
+	Event type matched expected type STARTUP (0 usec, limit 100000)	
+	[  1] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT]
+[0000.000787]: <~~ PROMPT (sent at 0000.000760)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[  2] SEND() EXPECT(INPUT)
+[0000.000807]: ~~> 
+	[expect INPUT]
+[0000.001272]: <~~ INPUT (sent at 0000.001182)
+	Event type matched expected type INPUT 	
+	[  3] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT]
+[0000.001503]: <~~ PROMPT (sent at 0000.001462)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[  4] EXPECT(EOF) FLAGS(0x1)
+	[expect EOF]
+	Target process 0 terminated with status 0x0
+=========== END OF TEST: start_empty_eof ===========

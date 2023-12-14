@@ -1,0 +1,30 @@
+Graded Commit:afa8a3bbe6fb0f9cd70882d9e63ad01a605bff62
+
+TEST NAME, POINTS,OUT OF
+basecode/run_echo,1,1,
+basecode/run_sleep_no_wait,1,1,
+basecode/run_sleep_wait,1,1,
+basic/poke_error,1,1,
+basic/run,1,1,
+basic/run_no_arg,1,1,
+basic/show_error,0,1,1 assertion(s) failed.: tests/__helper.c:77: The test driver returned an error (-1)
+basic/start_empty_eof,1,1,
+basic/start_eof,1,1,
+basic/start_quit_shutdown,1,1,
+cli/bogus_input,1,1,
+cli/help_command,1,1,
+cli/invalid_cont_with_no_processes,1,1,
+cli/newline_only,1,1,
+cli/quit_with_stopped_process,1,1,
+peek_poke/backtrace_basic,0,1,1 assertion(s) failed.: tests/__helper.c:77: The test driver returned an error (-1)
+peek_poke/peek_multiple,0,1,1 assertion(s) failed.: tests/__helper.c:77: The test driver returned an error (-1)
+peek_poke/peek_one,0,1,1 assertion(s) failed.: tests/__helper.c:77: The test driver returned an error (-1)
+peek_poke/peek_unreadable,1,1,
+peek_poke/poke_multiple,0,1,1 assertion(s) failed.: tests/__helper.c:77: The test driver returned an error (-1)
+peek_poke/poke_one,0,1,1 assertion(s) failed.: tests/__helper.c:77: The test driver returned an error (-1)
+peek_poke/poke_unwritable,0,1,1 assertion(s) failed.: tests/__helper.c:77: The test driver returned an error (-1)
+state/garbage_collection,0,1,1 assertion(s) failed.: tests/__helper.c:77: The test driver returned an error (-1)
+state/show,0,1,1 assertion(s) failed.: tests/__helper.c:77: The test driver returned an error (-1)
+state_change/release,1,1,
+state_change/stop,0,1,1 assertion(s) failed.: tests/__helper.c:77: The test driver returned an error (-1)
+total,16,26

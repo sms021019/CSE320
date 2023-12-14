@@ -1,0 +1,39 @@
+?
+=========== TEST LOG FOR: bogus_input ===========
+	[  0] EXPECT(STARTUP) TIMEOUT(100 ms)
+	[expect STARTUP]
+	Waiting for connection...
+	Connected to child: fd = 10
+[0000.001666]: <~~ STARTUP (sent at 0000.001597)
+	Event type matched expected type STARTUP (0 usec, limit 100000)	
+	[  1] EXPECT(PROMPT) TIMEOUT(100 ms)
+	[expect PROMPT]
+[0000.001703]: <~~ PROMPT (sent at 0000.001669)
+	Event type matched expected type PROMPT (0 usec, limit 100000)	
+	[  2] SEND(this fails)
+[0000.001740]: ~~> this fails
+	[  3] EXPECT(INPUT) TIMEOUT(10 ms)
+	[expect INPUT]
+[0000.001795]: <~~ INPUT (sent at 0000.001778)
+	Event type matched expected type INPUT (0 usec, limit 10000)	
+	[  4] EXPECT(ERROR) TIMEOUT(10 ms)
+	[expect ERROR]
+[0000.001828]: <~~ ERROR (sent at 0000.001802)
+	ERROR_EVENT: this
+	Event type matched expected type ERROR (0 usec, limit 10000)	
+	[  5] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT]
+[0000.001839]: <~~ PROMPT (sent at 0000.001829)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[  6] SEND(quit)
+[0000.001849]: ~~> quit
+	[  7] EXPECT(INPUT) TIMEOUT(10 ms)
+	[expect INPUT]
+[0000.001882]: <~~ INPUT (sent at 0000.001866)
+	Event type matched expected type INPUT (0 usec, limit 10000)	
+	[  8] EXPECT(SHUTDOWN) TIMEOUT(1000 ms)
+	[expect SHUTDOWN]
+[0000.001893]: <~~ SHUTDOWN (sent at 0000.001880)
+	Event type matched expected type SHUTDOWN (0 usec, limit 1000)	
+	Target process 901322 terminated with status 0x0
+=========== END OF TEST: bogus_input ===========

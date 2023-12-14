@@ -1,0 +1,128 @@
+function a @ 0x55e5dc8c21d0, argument x @ 0x7ffd0532ddf8 (=0xfedcba98)
+function b @ 0x55e5dc8c2225: argument x @ 0x7ffd0532ddd8 (=0xedcba987)
+function c @ 0x55e5dc8c227a: argument x @ 0x7ffd0532ddb8 (=0xdcba9876)
+function d @ 0x55e5dc8c22cf: argument x @ 0x7ffd0532dd98 (=0xcba98765)
+function e @ 0x55e5dc8c2324: argument x @ 0x7ffd0532dd78 (=0xba987654)
+function f @ 0x55e5dc8c2389 called
+static_variable @ 0x55e5dc8c5030 (=0)
+local_variable @ 0x7ffd0532dd50 (=a9876543)
+=========== TEST LOG FOR: poke_one ===========
+	[  0] EXPECT(STARTUP) TIMEOUT(100 ms)
+	[expect STARTUP]
+	Waiting for connection...
+	Connected to child: fd = 10
+[0000.001029]: <~~ STARTUP (sent at 0000.000996)
+	Event type matched expected type STARTUP (0 usec, limit 100000)	
+	[  1] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT]
+[0000.001581]: <~~ PROMPT (sent at 0000.001531)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[  2] SEND(run testprog/tp)
+[0000.001609]: ~~> run testprog/tp
+	[  3] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [3]SHOW]. Now: [0000.001623] Timeout: [0000.101623]
+	[  4] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [4]SHOW]. Now: [0000.001624] Timeout: [0000.101624]
+	[  5] EXPECT(INPUT) TIMEOUT(10 ms)
+	[expect INPUT] [queue: [3]SHOW [4]SHOW]
+[0000.002079]: <~~ INPUT (sent at 0000.002052)
+	Event type matched expected type INPUT (0 usec, limit 10000)	
+	[  6] EXPECT(CHANGE) TIMEOUT(10 ms)
+	[expect CHANGE] [queue: [3]SHOW [4]SHOW]
+[0000.002796]: <~~ CHANGE (sent at 0000.002755)
+	[77028: none -> running]
+	Event type matched expected type CHANGE (0 usec, limit 10000)	
+	[  7] EXPECT(SIGNAL) TIMEOUT(100 ms)
+	[expect SIGNAL] [queue: [3]SHOW [4]SHOW]
+[0000.003378]: <~~ SIGNAL (sent at 0000.003328)
+	Event type matched expected type SIGNAL (0 usec, limit 100000)	
+	[  8] EXPECT(CHANGE) TIMEOUT(10 ms)
+	[expect CHANGE] [queue: [3]SHOW [4]SHOW]
+[0000.003404]: <~~ [SHOW    ] '0	77028	T	running		testprog/tp'
+	Async event matched: SHOW
+	[  8] EXPECT(CHANGE) TIMEOUT(10 ms)
+	[expect CHANGE] [queue: [4]SHOW]
+[0000.003980]: <~~ CHANGE (sent at 0000.003923)
+	[77028: running -> stopped]
+	Event type matched expected type CHANGE (0 usec, limit 10000)	
+	[  9] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [4]SHOW]
+[0000.004448]: <~~ PROMPT (sent at 0000.004429)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[ 10] SEND(cont 0)
+[0000.004455]: ~~> cont 0
+	[ 11] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(10 ms)
+	Adding a new event to the queue: [expect [11]SHOW]. Now: [0000.004460] Timeout: [0000.014460]
+	[ 12] EXPECT(INPUT) TIMEOUT(10 ms)
+	[expect INPUT] [queue: [4]SHOW [11]SHOW]
+[0000.004473]: <~~ [SHOW    ] '0	77028	T	stopped		testprog/tp'
+	Async event matched: SHOW
+	[ 12] EXPECT(INPUT) TIMEOUT(10 ms)
+	[expect INPUT] [queue: [11]SHOW]
+[0000.004924]: <~~ INPUT (sent at 0000.004887)
+	Event type matched expected type INPUT (0 usec, limit 10000)	
+	[ 13] EXPECT(CHANGE) TIMEOUT(10 ms)
+	[expect CHANGE] [queue: [11]SHOW]
+[0000.005112]: <~~ CHANGE (sent at 0000.005096)
+	[77028: stopped -> running]
+	Event type matched expected type CHANGE (0 usec, limit 10000)	
+	[ 14] EXPECT(SIGNAL) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [14]SIGNAL]. Now: [0000.005115] Timeout: [0000.105115]
+	[ 15] EXPECT(CHANGE) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [15]CHANGE]. Now: [0000.005115] Timeout: [0000.105115]
+	[ 16] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [16]SHOW]. Now: [0000.005116] Timeout: [0000.105116]
+	[ 17] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [11]SHOW [14]SIGNAL [15]CHANGE [16]SHOW]
+[0000.005300]: <~~ PROMPT (sent at 0000.005289)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[ 18] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [11]SHOW [14]SIGNAL [15]CHANGE [16]SHOW]
+[0000.005306]: <~~ [SHOW    ] '0	77028	T	running		testprog/tp'
+	Async event matched: SHOW
+	[ 18] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [14]SIGNAL [15]CHANGE [16]SHOW]
+[0000.007602]: <~~ SIGNAL (sent at 0000.007593)
+	Async event matched: SIGNAL
+	[ 18] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [15]CHANGE [16]SHOW]
+[0000.007849]: <~~ CHANGE (sent at 0000.007842)
+	Async event matched: CHANGE
+	[77028: running -> stopped]
+	[ 18] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [16]SHOW]
+[0000.017921]: Driver: timeout (0, 10000)
+[0000.017943]: <~~ [SHOW    ] '0	77028	T	stopped		testprog/tp'
+	Async event matched: SHOW
+	[ 18] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT]
+[0000.028575]: Driver: timeout (0, 10000)
+Optionally expected event PROMPT did not arrive before timeout -- advancing
+	[ 19] FLAGS(0x8) TIMEOUT(100 ms)
+	Async event queue is empty, as expected
+	[ 20] SEND(bt 0)
+[0000.028608]: ~~> bt 0
+	[ 21] EXPECT(PEEK) FLAGS(0x4) TIMEOUT(10 ms)
+	Adding a new event to the queue: [expect [21]PEEK]. Now: [0000.028637] Timeout: [0000.038637]
+	[ 22] EXPECT(INPUT) TIMEOUT(10 ms)
+	[expect INPUT] [queue: [21]PEEK]
+[0000.028737]: <~~ INPUT (sent at 0000.028691)
+	Event type matched expected type INPUT (0 usec, limit 10000)	
+	[ 23] SEND(sync) EXPECT(INPUT) FLAGS(0x1) TIMEOUT(10 ms)
+[0000.028752]: ~~> sync
+	[expect INPUT] [queue: [21]PEEK]
+[0000.031389]: <~~ PROMPT (sent at 0000.031333)
+	Event type (PROMPT) does not match expected (INPUT) -- skipping
+[0000.033946]: <~~ INPUT (sent at 0000.033908)
+	Event type matched expected type INPUT (0 usec, limit 10000)	
+	[ 24] FLAGS(0x8) TIMEOUT(100 ms)
+	[expect NONE] [queue: [21]PEEK]
+[0000.033998]: <~~ [PEEK    ] '00007ffd0532dd80	000055e5dc8c2321'
+	Async event matched: PEEK
+	[ 24] FLAGS(0x8) TIMEOUT(100 ms)
+	Async event queue is empty, as expected
+	[ 25] EXPECT(ERROR) TIMEOUT(10 ms)
+	[expect ERROR]
+[0000.034031]: <~~ [PEEK    ] '00007ffd0532dda0	000055e5dc8c22cc'
+!!! Event type (PEEK) did not match expected type ERROR
+=========== ABORTING TEST: poke_one ===========

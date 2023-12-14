@@ -1,0 +1,21 @@
+=========== TEST LOG FOR: show_error ===========
+	[  0] EXPECT(STARTUP) TIMEOUT(100 ms)
+	[expect STARTUP]
+	Waiting for connection...
+	Connected to child: fd = 10
+[0000.001763]: <~~ STARTUP (sent at 0000.001510)
+	Event type matched expected type STARTUP (0 usec, limit 100000)	
+	[  1] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT]
+[0000.001790]: <~~ PROMPT (sent at 0000.001583)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[  2] SEND(show) EXPECT(INPUT)
+[0000.001797]: ~~> show
+	[expect INPUT]
+[0000.001885]: <~~ INPUT (sent at 0000.001826)
+	Event type matched expected type INPUT 	
+	[  3] EXPECT(ERROR)
+	[expect ERROR]
+[0000.001905]: <~~ PROMPT (sent at 0000.001854)
+!!! Event type (PROMPT) did not match expected type ERROR
+=========== ABORTING TEST: show_error ===========

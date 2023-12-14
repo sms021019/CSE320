@@ -1,0 +1,126 @@
+function a @ 0x563b99c7a1d0, argument x @ 0x7ffea80233f8 (=0xfedcba98)
+function b @ 0x563b99c7a225: argument x @ 0x7ffea80233d8 (=0xedcba987)
+function c @ 0x563b99c7a27a: argument x @ 0x7ffea80233b8 (=0xdcba9876)
+function d @ 0x563b99c7a2cf: argument x @ 0x7ffea8023398 (=0xcba98765)
+function e @ 0x563b99c7a324: argument x @ 0x7ffea8023378 (=0xba987654)
+function f @ 0x563b99c7a389 called
+static_variable @ 0x563b99c7d030 (=0)
+local_variable @ 0x7ffea8023350 (=a9876543)
+=========== TEST LOG FOR: backtrace_basic ===========
+	[  0] EXPECT(STARTUP) TIMEOUT(100 ms)
+	[expect STARTUP]
+	Waiting for connection...
+	Connected to child: fd = 10
+[0000.000411]: <~~ STARTUP (sent at 0000.000397)
+	Event type matched expected type STARTUP (0 usec, limit 100000)	
+	[  1] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT]
+[0000.000644]: <~~ PROMPT (sent at 0000.000630)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[  2] SEND(run testprog/tp)
+[0000.000652]: ~~> run testprog/tp
+	[  3] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [3]SHOW]. Now: [0000.000657] Timeout: [0000.100657]
+	[  4] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [4]SHOW]. Now: [0000.000657] Timeout: [0000.100657]
+	[  5] EXPECT(INPUT) TIMEOUT(10 ms)
+	[expect INPUT] [queue: [3]SHOW [4]SHOW]
+[0000.000840]: <~~ INPUT (sent at 0000.000835)
+	Event type matched expected type INPUT (0 usec, limit 10000)	
+	[  6] EXPECT(CHANGE) TIMEOUT(10 ms)
+	[expect CHANGE] [queue: [3]SHOW [4]SHOW]
+[0000.001073]: <~~ CHANGE (sent at 0000.001059)
+	[76988: none -> running]
+	Event type matched expected type CHANGE (0 usec, limit 10000)	
+	[  7] EXPECT(SIGNAL) TIMEOUT(100 ms)
+	[expect SIGNAL] [queue: [3]SHOW [4]SHOW]
+[0000.001509]: <~~ SIGNAL (sent at 0000.001265)
+	Event type matched expected type SIGNAL (0 usec, limit 100000)	
+	[  8] EXPECT(CHANGE) TIMEOUT(10 ms)
+	[expect CHANGE] [queue: [3]SHOW [4]SHOW]
+[0000.001517]: <~~ [SHOW    ] '0	76988	T	running		testprog/tp'
+	Async event matched: SHOW
+	[  8] EXPECT(CHANGE) TIMEOUT(10 ms)
+	[expect CHANGE] [queue: [4]SHOW]
+[0000.001528]: <~~ CHANGE (sent at 0000.001442)
+	[76988: running -> stopped]
+	Event type matched expected type CHANGE (0 usec, limit 10000)	
+	[  9] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [4]SHOW]
+[0000.004536]: <~~ PROMPT (sent at 0000.001631)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[ 10] SEND(cont 0)
+[0000.004539]: ~~> cont 0
+	[ 11] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(10 ms)
+	Adding a new event to the queue: [expect [11]SHOW]. Now: [0000.004546] Timeout: [0000.014546]
+	[ 12] EXPECT(INPUT) TIMEOUT(10 ms)
+	[expect INPUT] [queue: [4]SHOW [11]SHOW]
+[0000.004552]: <~~ [SHOW    ] '0	76988	T	stopped		testprog/tp'
+	Async event matched: SHOW
+	[ 12] EXPECT(INPUT) TIMEOUT(10 ms)
+	[expect INPUT] [queue: [11]SHOW]
+[0000.004560]: <~~ INPUT (sent at 0000.004556)
+	Event type matched expected type INPUT (0 usec, limit 10000)	
+	[ 13] EXPECT(CHANGE) TIMEOUT(10 ms)
+	[expect CHANGE] [queue: [11]SHOW]
+[0000.004810]: <~~ CHANGE (sent at 0000.004791)
+	[76988: stopped -> running]
+	Event type matched expected type CHANGE (0 usec, limit 10000)	
+	[ 14] EXPECT(SIGNAL) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [14]SIGNAL]. Now: [0000.004812] Timeout: [0000.104812]
+	[ 15] EXPECT(CHANGE) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [15]CHANGE]. Now: [0000.004813] Timeout: [0000.104813]
+	[ 16] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [16]SHOW]. Now: [0000.004813] Timeout: [0000.104813]
+	[ 17] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [11]SHOW [14]SIGNAL [15]CHANGE [16]SHOW]
+[0000.005003]: <~~ PROMPT (sent at 0000.004991)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[ 18] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [11]SHOW [14]SIGNAL [15]CHANGE [16]SHOW]
+[0000.005009]: <~~ [SHOW    ] '0	76988	T	running		testprog/tp'
+	Async event matched: SHOW
+	[ 18] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [14]SIGNAL [15]CHANGE [16]SHOW]
+[0000.010352]: <~~ SIGNAL (sent at 0000.010323)
+	Async event matched: SIGNAL
+	[ 18] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [15]CHANGE [16]SHOW]
+[0000.010548]: <~~ CHANGE (sent at 0000.010522)
+	Async event matched: CHANGE
+	[76988: running -> stopped]
+	[ 18] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [16]SHOW]
+[0000.021068]: Driver: timeout (0, 10000)
+[0000.021080]: <~~ [SHOW    ] '0	76988	T	stopped		testprog/tp'
+	Async event matched: SHOW
+	[ 18] EXPECT(PROMPT) FLAGS(0x10) TIMEOUT(10 ms)
+	[expect PROMPT]
+[0000.038261]: Driver: timeout (0, 10000)
+Optionally expected event PROMPT did not arrive before timeout -- advancing
+	[ 19] FLAGS(0x8) TIMEOUT(100 ms)
+	Async event queue is empty, as expected
+	[ 20] SEND(bt 0)
+[0000.038266]: ~~> bt 0
+	[ 21] EXPECT(INPUT) TIMEOUT(10 ms)
+	[expect INPUT]
+[0000.038364]: <~~ INPUT (sent at 0000.038297)
+	Event type matched expected type INPUT (0 usec, limit 10000)	
+	[ 22] EXPECT(PEEK) FLAGS(0x4) TIMEOUT(10 ms)
+	Adding a new event to the queue: [expect [22]PEEK]. Now: [0000.038367] Timeout: [0000.048367]
+	[ 23] EXPECT(PEEK) FLAGS(0x4) TIMEOUT(10 ms)
+	Adding a new event to the queue: [expect [23]PEEK]. Now: [0000.038368] Timeout: [0000.048368]
+	[ 24] EXPECT(PEEK) FLAGS(0x4) TIMEOUT(10 ms)
+	Adding a new event to the queue: [expect [24]PEEK]. Now: [0000.038369] Timeout: [0000.048369]
+	[ 25] EXPECT(PEEK) FLAGS(0x4) TIMEOUT(10 ms)
+	Adding a new event to the queue: [expect [25]PEEK]. Now: [0000.038369] Timeout: [0000.048369]
+	[ 26] EXPECT(PROMPT) FLAGS(0x1) TIMEOUT(10 ms)
+	[expect PROMPT] [queue: [22]PEEK [23]PEEK [24]PEEK [25]PEEK]
+[0000.038947]: <~~ PROMPT (sent at 0000.038872)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[ 27] FLAGS(0x8) TIMEOUT(100 ms)
+	[expect NONE] [queue: [22]PEEK [23]PEEK [24]PEEK [25]PEEK]
+[0000.150939]: Driver: timeout (0, 100000)
+[0000.150991]: <~~ [PEEK    ] '00007ffea8023380	0000563b99c7a321'
+[0000.151000]: Driver: async event [22][PEEK] has not arrived within timeout (0, 10000)
+=========== ABORTING TEST: backtrace_basic ===========

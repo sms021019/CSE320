@@ -1,0 +1,24 @@
+?
+=========== TEST LOG FOR: run_no_arg ===========
+	[  0] EXPECT(STARTUP) TIMEOUT(100 ms)
+	[expect STARTUP]
+	Waiting for connection...
+	Connected to child: fd = 10
+[0000.000493]: <~~ STARTUP (sent at 0000.000426)
+	Event type matched expected type STARTUP (0 usec, limit 100000)	
+	[  1] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT]
+[0000.000862]: <~~ PROMPT (sent at 0000.000786)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[  2] SEND(run) EXPECT(INPUT)
+[0000.000873]: ~~> run
+	[expect INPUT]
+[0000.001610]: <~~ INPUT (sent at 0000.001553)
+	Event type matched expected type INPUT 	
+	[  3] EXPECT(ERROR)
+	[expect ERROR]
+[0000.001936]: <~~ ERROR (sent at 0000.001857)
+	ERROR_EVENT: run
+	Event type matched expected type ERROR 	
+	Target process 76911 terminated with status 0xd
+=========== END OF TEST: run_no_arg ===========

@@ -1,0 +1,91 @@
+=========== TEST LOG FOR: quit_with_stopped_process ===========
+	[  0] EXPECT(STARTUP) TIMEOUT(100 ms)
+	[expect STARTUP]
+	Waiting for connection...
+	Connected to child: fd = 10
+[0000.001271]: <~~ STARTUP (sent at 0000.001247)
+	Event type matched expected type STARTUP (0 usec, limit 100000)	
+	[  1] EXPECT(PROMPT) TIMEOUT(100 ms)
+	[expect PROMPT]
+[0000.001332]: <~~ PROMPT (sent at 0000.001316)
+	Event type matched expected type PROMPT (0 usec, limit 100000)	
+	[  2] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [2]SHOW]. Now: [0000.001337] Timeout: [0000.101337]
+	[  3] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [3]SHOW]. Now: [0000.001340] Timeout: [0000.101340]
+	[  4] EXPECT(PROMPT) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [4]PROMPT]. Now: [0000.001342] Timeout: [0000.101342]
+	[  5] SEND(run sleep 1)
+[0000.001363]: ~~> run sleep 1
+	[  6] EXPECT(INPUT) TIMEOUT(100 ms)
+	[expect INPUT] [queue: [2]SHOW [3]SHOW [4]PROMPT]
+[0000.001437]: <~~ INPUT (sent at 0000.001404)
+	Event type matched expected type INPUT (0 usec, limit 100000)	
+	[  7] EXPECT(CHANGE) TIMEOUT(100 ms)
+	[expect CHANGE] [queue: [2]SHOW [3]SHOW [4]PROMPT]
+[0000.001689]: <~~ CHANGE (sent at 0000.001593)
+	[901351: none -> running]
+	Event type matched expected type CHANGE (0 usec, limit 100000)	
+	[  8] EXPECT(SIGNAL) TIMEOUT(100 ms)
+	[expect SIGNAL] [queue: [2]SHOW [3]SHOW [4]PROMPT]
+[0000.001730]: <~~ [SHOW    ] '0	901351	T	running		sleep 1'
+	Async event matched: SHOW
+	[  8] EXPECT(SIGNAL) TIMEOUT(100 ms)
+	[expect SIGNAL] [queue: [3]SHOW [4]PROMPT]
+[0000.001757]: <~~ PROMPT (sent at 0000.001639)
+	Async event matched: PROMPT
+	[  8] EXPECT(SIGNAL) TIMEOUT(100 ms)
+	[expect SIGNAL] [queue: [3]SHOW]
+[0000.002155]: <~~ SIGNAL (sent at 0000.002126)
+	Event type matched expected type SIGNAL (0 usec, limit 100000)	
+	[  9] EXPECT(CHANGE) TIMEOUT(100 ms)
+	[expect CHANGE] [queue: [3]SHOW]
+[0000.002178]: <~~ CHANGE (sent at 0000.002158)
+	[901351: running -> stopped]
+	Event type matched expected type CHANGE (0 usec, limit 100000)	
+	[ 10] FLAGS(0x8) TIMEOUT(100 ms)
+	[expect NONE] [queue: [3]SHOW]
+[0000.002197]: <~~ [SHOW    ] '0	901351	T	stopped		sleep 1'
+	Async event matched: SHOW
+	[ 10] FLAGS(0x8) TIMEOUT(100 ms)
+	Async event queue is empty, as expected
+	[ 11] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [11]SHOW]. Now: [0000.002205] Timeout: [0000.102205]
+	[ 12] EXPECT(SHOW) FLAGS(0x4) TIMEOUT(100 ms)
+	Adding a new event to the queue: [expect [12]SHOW]. Now: [0000.002207] Timeout: [0000.102207]
+	[ 13] SEND(quit)
+[0000.002211]: ~~> quit
+	[ 14] EXPECT(INPUT) TIMEOUT(100 ms)
+	[expect INPUT] [queue: [11]SHOW [12]SHOW]
+[0000.002276]: <~~ INPUT (sent at 0000.002255)
+	Event type matched expected type INPUT (0 usec, limit 100000)	
+	[ 15] EXPECT(CHANGE) TIMEOUT(100 ms)
+	[expect CHANGE] [queue: [11]SHOW [12]SHOW]
+[0000.002295]: <~~ CHANGE (sent at 0000.002282)
+	[901351: stopped -> killed]
+	Event type matched expected type CHANGE (0 usec, limit 100000)	
+	[ 16] EXPECT(SIGNAL) TIMEOUT(100 ms)
+	[expect SIGNAL] [queue: [11]SHOW [12]SHOW]
+[0000.002314]: <~~ [SHOW    ] '0	901351	T	killed		sleep 1'
+	Async event matched: SHOW
+	[ 16] EXPECT(SIGNAL) TIMEOUT(100 ms)
+	[expect SIGNAL] [queue: [12]SHOW]
+[0000.002406]: <~~ SIGNAL (sent at 0000.002387)
+	Event type matched expected type SIGNAL (0 usec, limit 100000)	
+	[ 17] EXPECT(CHANGE) TIMEOUT(100 ms)
+	[expect CHANGE] [queue: [12]SHOW]
+[0000.002418]: <~~ CHANGE (sent at 0000.002411)
+	[901351: killed -> dead]
+	Event type matched expected type CHANGE (0 usec, limit 100000)	
+	[ 18] EXPECT(SHUTDOWN) TIMEOUT(100 ms)
+	[expect SHUTDOWN] [queue: [12]SHOW]
+[0000.002443]: <~~ SHUTDOWN (sent at 0000.002428)
+	Event type matched expected type SHUTDOWN (0 usec, limit 100000)	
+	[ 19] FLAGS(0x8) TIMEOUT(100 ms)
+	[expect NONE] [queue: [12]SHOW]
+[0000.002458]: <~~ [SHOW    ] '0	901351	T	dead	0x9	sleep 1'
+	Async event matched: SHOW
+	[ 19] FLAGS(0x8) TIMEOUT(100 ms)
+	Async event queue is empty, as expected
+	Target process 901350 terminated with status 0x0
+=========== END OF TEST: quit_with_stopped_process ===========

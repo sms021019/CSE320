@@ -1,0 +1,23 @@
+=========== TEST LOG FOR: run ===========
+	[  0] EXPECT(STARTUP) TIMEOUT(100 ms)
+	[expect STARTUP]
+	Waiting for connection...
+	Connected to child: fd = 10
+[0000.000469]: <~~ STARTUP (sent at 0000.000406)
+	Event type matched expected type STARTUP (0 usec, limit 100000)	
+	[  1] EXPECT(PROMPT) TIMEOUT(10 ms)
+	[expect PROMPT]
+[0000.000701]: <~~ PROMPT (sent at 0000.000635)
+	Event type matched expected type PROMPT (0 usec, limit 10000)	
+	[  2] SEND(run echo) EXPECT(INPUT)
+[0000.000712]: ~~> run echo
+	[expect INPUT]
+[0000.000838]: <~~ INPUT (sent at 0000.000831)
+	Event type matched expected type INPUT 	
+	[  3] EXPECT(CHANGE) FLAGS(0x1) TIMEOUT(10 ms)
+	[expect CHANGE]
+[0000.001060]: <~~ CHANGE (sent at 0000.001046)
+	[76902: none -> running]
+	Event type matched expected type CHANGE (0 usec, limit 10000)	
+	Target process 76901 terminated with status 0xd
+=========== END OF TEST: run ===========
