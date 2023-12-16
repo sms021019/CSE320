@@ -1,0 +1,8 @@
+Graded Commit:79902bbe05b3f84f40d7a94fc431ee8290ebc315
+
+TEST NAME, POINTS,OUT OF
+server_suite/00_start_server,0,1,1 assertion(s) failed.: tests/server_test.c:200: Valgrind reported errors
+server_suite/01_connect_abort,1,1,
+server_suite/02_connect_commit,0,1,The test timed out.: None
+server_suite/05_bank_simulation,0,1,The test timed out.: None
+total,1,4

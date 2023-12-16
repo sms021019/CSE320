@@ -1,0 +1,207 @@
+--ascii is deprecated. Use LANG/LC_* variables to control encoding, and TERM/--color to control colors.
+[----] Criterion v2.4.1-13-g2f48d0f-dirty (bleeding)
+[====] Running 5 tests from client_registry_suite:
+[RUN ] client_registry_suite::basic_one_registry
+[PASS] client_registry_suite::basic_one_registry: (0.00s)
+[RUN ] client_registry_suite::basic_one_registry_premature
+[----] tests/client_registry_test.c:274: Assertion Failed
+[----]   
+[----]   Premature return from creg_wait_for_empty
+[----]   
+[FAIL] client_registry_suite::basic_one_registry_premature: (1.12s)
+[RUN ] client_registry_suite::basic_two_registries
+[PASS] client_registry_suite::basic_two_registries: (3.69s)
+[RUN ] client_registry_suite::many_threads_one_registry
+[PASS] client_registry_suite::many_threads_one_registry: (26.35s)
+[RUN ] client_registry_suite::many_threads_one_registry_premature
+[----] tests/client_registry_test.c:344: Assertion Failed
+[----]   
+[----]   Premature return from creg_wait_for_empty
+[----]   
+[FAIL] client_registry_suite::many_threads_one_registry_premature: (26.73s)
+[====] Running 9 tests from data_suite:
+[RUN ] data_suite::blob_compare_test
+[PASS] data_suite::blob_compare_test: (0.00s)
+[RUN ] data_suite::blob_create_test
+[----] tests/data_test.c:29: Assertion Failed
+[----]   
+[----]   Expected reference count 1, was 136122912
+[----]   
+[FAIL] data_suite::blob_create_test: (0.00s)
+[RUN ] data_suite::blob_ref_unref_test
+[PASS] data_suite::blob_ref_unref_test: (0.00s)
+[RUN ] data_suite::key_compare_test
+[PASS] data_suite::key_compare_test: (0.00s)
+[RUN ] data_suite::key_create_test
+[----] tests/data_test.c:72: Assertion Failed
+[----]   
+[----]   Expected reference count 1, was 136057375
+[----]   
+[FAIL] data_suite::key_create_test: (0.00s)
+[RUN ] data_suite::key_dispose_test
+[----] tests/data_test.c:82: Assertion Failed
+[----]   
+[----]   Expected reference count 2, was 136122913
+[----]   
+[FAIL] data_suite::key_dispose_test: (0.00s)
+[RUN ] data_suite::many_threads_ref_unref_blob
+[PASS] data_suite::many_threads_ref_unref_blob: (1.55s)
+[RUN ] data_suite::version_create_test
+[PASS] data_suite::version_create_test: (0.00s)
+[RUN ] data_suite::version_dispose_test
+[PASS] data_suite::version_dispose_test: (0.00s)
+[====] Running 11 tests from protocol_suite:
+[RUN ] protocol_suite::recv_empty
+[PASS] protocol_suite::recv_empty: (0.00s)
+[RUN ] protocol_suite::recv_error
+[----] tests/protocol_test.c:260: Assertion Failed
+[----]   
+[----]   Returned value was not -1
+[----]   
+[FAIL] protocol_suite::recv_error: (0.00s)
+[RUN ] protocol_suite::recv_no_payload
+[----] tests/protocol_test.c:138: Assertion Failed
+[----]   
+[----]   Received packet serial number did not match expected
+[----]   
+[FAIL] protocol_suite::recv_no_payload: (0.00s)
+[RUN ] protocol_suite::recv_null_payload
+[----] tests/protocol_test.c:164: Assertion Failed
+[----]   
+[----]   Received packet serial number did not match expected
+[----]   
+[FAIL] protocol_suite::recv_null_payload: (0.00s)
+[RUN ] protocol_suite::recv_short_header
+[PASS] protocol_suite::recv_short_header: (0.00s)
+[RUN ] protocol_suite::recv_short_payload
+[FAIL] protocol_suite::recv_short_payload: (0.00s)
+[RUN ] protocol_suite::recv_with_payload
+[----] tests/protocol_test.c:190: Assertion Failed
+[----]   
+[----]   Received packet serial number did not match expected
+[----]   
+[FAIL] protocol_suite::recv_with_payload: (0.00s)
+[RUN ] protocol_suite::send_error
+[----] tests/protocol_test.c:118: Assertion Failed
+[----]   
+[----]   Returned value was not -1
+[----]   
+[FAIL] protocol_suite::send_error: (0.00s)
+[RUN ] protocol_suite::send_no_payload
+test_output/pkt_no_payload tests/rsrc/pkt_no_payload differ: byte 5, line 1
+[----] tests/protocol_test.c:40: Assertion Failed
+[----]   
+[----]   Packet sent did not match expected
+[----]   
+[FAIL] protocol_suite::send_no_payload: (0.00s)
+[RUN ] protocol_suite::send_null_payload
+test_output/pkt_null_payload tests/rsrc/pkt_null_payload differ: byte 5, line 1
+[----] tests/protocol_test.c:94: Assertion Failed
+[----]   
+[----]   Packet sent did not match expected
+[----]   
+[FAIL] protocol_suite::send_null_payload: (0.00s)
+[RUN ] protocol_suite::send_with_payload
+[----] tests/protocol_test.c:63: Assertion Failed
+[----]   
+[----]   Returned value was not 0
+[----]   
+[FAIL] protocol_suite::send_with_payload: (0.00s)
+[====] Running 10 tests from store_suite:
+[RUN ] store_suite::collisions
+[----] tests/store_test.c:270: Assertion Failed
+[----]   
+[----]   Store was not implemented
+[----]   
+[FAIL] store_suite::collisions: (0.00s)
+[RUN ] store_suite::get_on_empty_store
+[----] tests/store_test.c:173: Assertion Failed
+[----]   
+[----]   Store was not implemented
+[----]   
+[FAIL] store_suite::get_on_empty_store: (0.00s)
+[RUN ] store_suite::init
+[----] tests/store_test.c:162: Assertion Failed
+[----]   
+[----]   Store was not implemented
+[----]   
+[FAIL] store_suite::init: (0.00s)
+[RUN ] store_suite::multi_put_then_get
+[----] tests/store_test.c:239: Assertion Failed
+[----]   
+[----]   Store was not implemented
+[----]   
+[FAIL] store_suite::multi_put_then_get: (0.00s)
+[RUN ] store_suite::multi_trans_backward
+[----] tests/store_test.c:376: Assertion Failed
+[----]   
+[----]   Store was not implemented
+[----]   
+[FAIL] store_suite::multi_trans_backward: (0.00s)
+[RUN ] store_suite::multi_trans_forward
+[----] tests/store_test.c:296: Assertion Failed
+[----]   
+[----]   Store was not implemented
+[----]   
+[FAIL] store_suite::multi_trans_forward: (0.00s)
+[RUN ] store_suite::multi_trans_forward_gc
+[----] tests/store_test.c:326: Assertion Failed
+[----]   
+[----]   Store was not implemented
+[----]   
+[FAIL] store_suite::multi_trans_forward_gc: (0.00s)
+[RUN ] store_suite::put_on_empty_store
+[----] tests/store_test.c:194: Assertion Failed
+[----]   
+[----]   Store was not implemented
+[----]   
+[FAIL] store_suite::put_on_empty_store: (0.00s)
+[RUN ] store_suite::put_then_get
+[----] tests/store_test.c:213: Assertion Failed
+[----]   
+[----]   Store was not implemented
+[----]   
+[FAIL] store_suite::put_then_get: (0.00s)
+[RUN ] store_suite::stress_test
+[----] tests/store_test.c:445: Assertion Failed
+[----]   
+[----]   Store was not implemented
+[----]   
+[FAIL] store_suite::stress_test: (0.00s)
+[====] Running 11 tests from transaction_suite:
+[RUN ] transaction_suite::many_threads_ref_unref_trans
+[PASS] transaction_suite::many_threads_ref_unref_trans: (1.22s)
+[RUN ] transaction_suite::transaction_abort_test
+[PASS] transaction_suite::transaction_abort_test: (0.00s)
+[RUN ] transaction_suite::transaction_commit_test
+[PASS] transaction_suite::transaction_commit_test: (0.00s)
+[RUN ] transaction_suite::transaction_create_test
+[PASS] transaction_suite::transaction_create_test: (0.00s)
+[RUN ] transaction_suite::transaction_dependent_abort_block_test
+[PASS] transaction_suite::transaction_dependent_abort_block_test: (0.00s)
+[RUN ] transaction_suite::transaction_dependent_abort_test
+[----] tests/transaction_test.c:84: Assertion Failed
+[----]   
+[----]   Expected status 2, was 701924355
+[----]   
+[FAIL] transaction_suite::transaction_dependent_abort_test: (0.00s)
+[RUN ] transaction_suite::transaction_dependent_commit_block_test
+[FAIL] transaction_suite::transaction_dependent_commit_block_test: Timed out. (5.00s)
+[RUN ] transaction_suite::transaction_dependent_commit_test
+[FAIL] transaction_suite::transaction_dependent_commit_test: Timed out. (5.00s)
+[RUN ] transaction_suite::transaction_multi_dependent_test_1
+[----] tests/transaction_test.c:193: Assertion Failed
+[----]   
+[----]   Dependent transaction did not finish as it should
+[----]   
+[FAIL] transaction_suite::transaction_multi_dependent_test_1: (2.00s)
+[RUN ] transaction_suite::transaction_multi_dependent_test_2
+[----] tests/transaction_test.c:234: Assertion Failed
+[----]   
+[----]   Dependent transaction did not finish as it should
+[----]   
+[FAIL] transaction_suite::transaction_multi_dependent_test_2: (2.00s)
+[RUN ] transaction_suite::transaction_ref_unref_test
+[PASS] transaction_suite::transaction_ref_unref_test: (0.00s)
+[----] Writing xml report in `crit.xml`.
+[====] Synthesis: Tested: 46 | Passing: 17 | Failing: 29 | Crashing: 0 
